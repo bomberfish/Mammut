@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Log in</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+  </head>
+  <body>
+    <form onsubmit="createApp(); return false;">
+      <label for="domain">Instance domain:</label>
+      <input id="domain" name="domain" type="url" required />
+      <button type="submit">Continue</button>
+    </form>
+  </body>
+  <script>
+    document.getElementById("domain").value =
+      localStorage.getItem("instanceDomain");
+  </script>
+  <script type="text/javascript" src="/auth.js"></script>
+</html>

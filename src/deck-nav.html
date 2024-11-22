@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Deck</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/util.js"></script>
+    <script src="/auth.js"></script>
+    <style>
+      a {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="/timelines/following.html" target="content">Home</a>
+    <a href="/timelines/local.html" target="content">Local</a>
+    <a href="/timelines/federated.html" target="content">Federated</a>
+    <br />
+    <div id="sacrifice"></div>
+    <a
+      href="#"
+      onclick="if(confirm('Are you sure you want to log out?')){logOut()}"
+      >Log out</a
+    >
+  </body>
+  <script>
+    var myProfileLink = document.createElement("a");
+    myId = localStorage.getItem("myId");
+    myProfileLink.href = "/user.html?id=" + myId;
+    myProfileLink.target = "content";
+    myProfileLink.textContent = "My Profile";
+    document.getElementById("sacrifice").replaceWith(myProfileLink);
+  </script>
+</html>

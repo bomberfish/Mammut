@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Local</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script src="/util.js"></script>
+  </head>
+  <body></body>
+  <script src="/timeline.js"></script>
+  <script>
+    getTimeline("public?local=true");
+  </script>
+</html>

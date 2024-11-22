@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Emoji</title>
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <script>
+      grab("/api/v1/custom_emojis", "GET", true, function (xhr) {
+        if (xhr.status == 200) {
+          var emojis = JSON.parse(xhr.response);
+          var emojiGrid = document.createElement("div");
+          emojiGrid.classList.add("picker-grid");
+          for (var i = 0; i < emojis.length; i++) {
+            var img = document.createElement("img");
+            img.className = "emote";
+            img.src = emojis[i].static_url;
+            img.alt = emojis[i].shortcode;
+            img.title = emojis[i].shortcode;
+            img.id = emojis[i].shortcode;
+            img.lazy = "true";
+            img.onclick = function () {
+              window.parent.postMessage(
+                {
+                  type: "emoji-insert",
+                  data: this.title,
+                  postId: getSearchParam("post_id"),
+                },
+                "*",
+              );
+            };
+            emojiGrid.appendChild(img);
+          }
+          document.body.appendChild(emojiGrid);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- <input type="text" id="emoji-search" placeholder="Search..." /> -->
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Error</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="/util.js"></script>
+  </head>
+  <body>
+    <h1 style="color: red">Error!</h1>
+    <p>There was an error processing your request. Please try again later.</p>
+    <p id="error"></p>
+  </body>
+  <script>
+    const error = getSearchParam("error");
+    document.getElementById("error").innerHTML = error;
+  </script>
+</html>

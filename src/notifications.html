@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Notifications</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <style>
+      button,
+      h3 {
+        display: inline;
+      }
+    </style>
+    <script>
+      var token = localStorage.getItem("access_token");
+      var domain = localStorage.getItem("instanceDomain");
+
+      function getNotifications() {
+        grab("/api/v1/notifications", "GET", true, function (xhr) {
+          var response = JSON.parse(xhr.responseText);
+          console.log(response);
+          var notifications = response;
+          if (notifications.length === 0) {
+            document.body.innerHTML += "<p>You're all caught up!</p>";
+            return;
+          }
+          document.querySelector("h3").innerHTML +=
+            " (" + notifications.length + ")";
+          var notificationList = document.createElement("ul");
+          notificationList.id = "notificationList";
+          document.body.appendChild(notificationList);
+
+          for (var i = 0; i < notifications.length; i++) {
+            var notification = notifications[i];
+            var notificationItem = document.createElement("li");
+            notificationItem.classList = "notificationItem";
+            notificationList.appendChild(notificationItem);
+            var notificationText = document.createElement("p");
+            notificationText.classList = "notificationText";
+            notificationText.innerHTML =
+              notification.type.charAt(0).toUpperCase() +
+              notification.type.substr(1) +
+              " from ";
+
+            var acct = document.createElement("a");
+            acct.href = "/user.html?id=" + notification.account.id;
+            acct.innerHTML = "@" + notification.account.acct;
+            acct.setAttribute("target", "content");
+            notificationText.appendChild(acct);
+
+            if (notification.status) {
+              if (notification.status.content) {
+                notificationText.innerHTML +=
+                  ":<div class='notification-content'>" +
+                  notification.status.content +
+                  "</div>";
+
+                const links = notificationText
+                  .querySelector(".notification-content")
+                  .querySelectorAll("a");
+                for (var j = 0; j < links.length; j++) {
+                  links[j].setAttribute("target", "content");
+                  for (
+                    var k = 0;
+                    k < notification.status.mentions.length;
+                    k++
+                  ) {
+                    if (
+                      notification.status.mentions[k].url ===
+                      links[j].getAttribute("href")
+                    ) {
+                      links[j].href =
+                        "/user.html?id=" + notification.status.mentions[k].id;
+                    }
+                  }
+                }
+              }
+              notificationItem.appendChild(notificationText);
+              interpolateEmoji(notificationText, notification.status.emojis);
+              var notificationButton = document.createElement("button");
+              notificationButton.classList = "notificationButton";
+              notificationButton.innerHTML = "View Post";
+              const url = "/status.html?id=" + notification.status.id;
+              console.log(url);
+              notificationButton.onclick = function () {
+                window.open(url, "content");
+              };
+              notificationItem.appendChild(notificationButton);
+            } else {
+              notificationItem.appendChild(notificationText);
+            }
+          }
+        });
+      }
+
+      function readAll() {
+        grab("/api/v1/notifications/clear", "POST", true, function (xhr) {
+          if (xhr.status === 200) {
+            document.querySelector("h3").innerHTML = "Notifications";
+            document.querySelector("#notificationList").remove();
+            getNotifications();
+          } else {
+            alert("Failed to clear notifications: " + xhr.responseText);
+          }
+        });
+      }
+
+      getNotifications();
+    </script>
+  </head>
+
+  <body>
+    <div id="header">
+      <h3>Notifications</h3>
+      <button onclick="readAll()">Read</button>
+      <button onclick="window.location.href = '/notifications.html'">
+        Refresh
+      </button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Deck</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <frameset cols="10%, *, 25%" BORDERCOLOR="#00000000">
+    <frame src="/deck-nav.html" id="nav" />
+    <frame src="/timelines/following.html" name="content" id="content" />
+    <frameset id="rightmost" rows="40%,*">
+      <frame src="/compose.html" name="compose" id="compose" />
+      <frame src="/notifications.html" id="notifications" />
+    </frameset>
+  </frameset>
+  <script>
+    if (
+      localStorage.getItem("client_id") == null ||
+      localStorage.getItem("client_secret") == null ||
+      localStorage.getItem("auth_code") == null ||
+      localStorage.getItem("access_token") == null
+    ) {
+      window.location.href = "/domain.html";
+    }
+
+    function fixSizing() {
+      if (window.clientWidth < 800) {
+        document.getElementById("rightmost").remove();
+      }
+
+      if (window.clientHeight > window.clientWidth) {
+        document.getElementsByTagName("frameset")[0].removeAttribute("cols");
+        document
+          .getElementsByTagName("frameset")[0]
+          .setAttribute("rows", "10%, *, 25%");
+      }
+    }
+    window.addEventListener("resize", fixSizing);
+    window.onload = fixSizing;
+    window.addEventListener("message", function (e) {
+      console.log("[DECK]", e);
+      if (e.data.type == "timeline-update-request") {
+        document
+          .getElementById("content")
+          .contentWindow.postMessage({ type: "timeline-update-request" }, "*");
+      }
+    });
+  </script>
+</html>

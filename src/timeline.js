@@ -1,0 +1,1081 @@
+let domain = localStorage.getItem("instanceDomain");
+const token = localStorage.getItem("access_token");
+
+if (domain == null || token == null) {
+  window.location.href = "/domain.html";
+}
+var myId = localStorage.getItem("myId");
+
+function getTimeline(timelineType) {
+  appendTimelineNavBar(timelineType);
+  let afterParam = getSearchParam("after");
+  addComposeBtn();
+
+  grab(
+    "/api/v1/timelines/" +
+      timelineType +
+      "?limit=40" +
+      (afterParam ? "&max_id=" + afterParam : ""),
+    "GET",
+    true,
+    function (xhr) {
+      if (xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+        console.log(response);
+        var timelineDiv = document.createElement("div");
+        timelineDiv.id = "timeline";
+        timelineDiv.innerHTML = "";
+        if (response.length == 0) {
+          timelineDiv.innerHTML = "No posts.";
+        }
+        if (afterParam != null) {
+          var newestButton = document.createElement("a");
+          fixupLinkInFrames(newestButton);
+          newestButton.id = "newestBtn";
+          newestButton.href = window.location.pathname;
+          newestButton.innerHTML = "Jump to the latest ";
+          timelineDiv.appendChild(newestButton);
+        }
+        for (var i = 0; i < response.length; i++) {
+          var post = response[i];
+          timelineDiv.appendChild(
+            appendStatus(post, "timeline-" + timelineType),
+          );
+          if (i == response.length - 1) {
+            var lastPostId = post.id,
+              olderButton = document.createElement("a");
+            fixupLinkInFrames(olderButton);
+            olderButton.href =
+              window.location.pathname + "?after=" + lastPostId;
+            olderButton.innerHTML = "View older posts";
+            timelineDiv.appendChild(olderButton);
+            olderButton.id = "olderBtn";
+          }
+        }
+        document.body.appendChild(timelineDiv);
+      } else {
+        window.location.href =
+          "/error.html?error=" +
+          truncate(
+            encodeURIComponent(
+              "Endpoint /api/v1/timelines/" +
+                timelineType +
+                " returned code " +
+                xhr.status +
+                " and readyState " +
+                xhr.readyState +
+                "\n" +
+                xhr.responseText,
+            ),
+            2000,
+          );
+      }
+    },
+  );
+}
+
+function appendStatus(original_post, currentViewType, indentAmount) {
+  var status = original_post,
+    statusDiv = document.createElement("div");
+
+  if (indentAmount) {
+    statusDiv.style.marginLeft = indentAmount + "px";
+  }
+
+  statusDiv.className = "status id-" + status.id + " " + currentViewType;
+
+  if (original_post.reblog) {
+    status = original_post.reblog;
+    var reblogLabel = document.createElement("div");
+    reblogLabel.className = "postlabel";
+    reblogLabel.appendChild(document.createTextNode("Reblogged by "));
+    var rebloggerLink = document.createElement("a");
+    fixupLinkInFrames(rebloggerLink);
+    rebloggerLink.href = "/user.html?id=" + original_post.account.id;
+    fixupLinkInFrames(rebloggerLink);
+    rebloggerLink.innerHTML = original_post.account.display_name;
+    reblogLabel.appendChild(rebloggerLink);
+    statusDiv.appendChild(reblogLabel);
+  }
+
+  console.log(original_post, status, original_post === status);
+
+  var replyToAccountId = status.in_reply_to_account_id;
+  if (replyToAccountId) {
+    var replyLabel = document.createElement("div");
+    replyLabel.className = "postlabel";
+    replyLabel.appendChild(document.createTextNode("Replied to "));
+    var replyLink = document.createElement("a");
+    fixupLinkInFrames(replyLink);
+    replyLink.href = "/user.html?id=" + replyToAccountId;
+    replyLink.innerHTML = "a user";
+    fixupLinkInFrames(replyLink);
+    replyLabel.appendChild(replyLink);
+    statusDiv.appendChild(replyLabel);
+    grab("/api/v1/accounts/" + replyToAccountId, "GET", true, function (xhr) {
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        console.log(response);
+        replyLink.innerHTML = response.display_name;
+      }
+    });
+  }
+  if (status.sensitive && currentViewType != "expanded") {
+    var userLink = document.createElement("a");
+    fixupLinkInFrames(userLink);
+    userLink.href = "/user.html?id=" + status.account.id;
+    userLink.innerHTML = status.account.display_name;
+    interpolateEmoji(userLink, status.account.emojis);
+    statusDiv.appendChild(userLink);
+
+    statusDiv.appendChild(document.createElement("br"));
+
+    var spoilerDiv = document.createElement("div");
+    spoilerDiv.className = "spoiler";
+
+    var spoilerLabel = document.createElement("strong");
+    spoilerLabel.className = "spoiler-label";
+    spoilerLabel.innerHTML = "Content Warning:";
+
+    spoilerDiv.appendChild(spoilerLabel);
+
+    var text = document.createTextNode(
+      " " + status.spoiler_text + " (Click this post to reveal full details)",
+    );
+
+    spoilerDiv.appendChild(text);
+
+    statusDiv.appendChild(spoilerDiv);
+  } else {
+    var userLink = document.createElement("a");
+    fixupLinkInFrames(userLink);
+    userLink.href = "/user.html?id=" + status.account.id;
+    userLink.innerHTML = status.account.display_name;
+    interpolateEmoji(userLink, status.account.emojis);
+    statusDiv.appendChild(userLink);
+    statusDiv.appendChild(document.createElement("br"));
+    var contentDiv = document.createElement("div");
+    contentDiv.innerHTML = status.content;
+
+    statusDiv.onclick = function (e) {
+      if (statusDiv != e.target && contentDiv != e.target) return;
+      window.location.href = "/status.html?id=" + status.id;
+    };
+
+    const links = contentDiv.querySelectorAll("a");
+
+    for (var i = 0; i < links.length; i++) {
+      const link = links[i];
+      fixupLinkInFrames(link);
+      for (var j = 0; j < status.mentions.length; j++) {
+        const mention = status.mentions[j];
+        if (mention.url === link.href) {
+          link.href = "/user.html?id=" + mention.id;
+          break;
+        }
+      }
+    }
+
+    interpolateEmoji(contentDiv, status.emojis);
+
+    statusDiv.appendChild(contentDiv);
+
+    if (status.poll) {
+      function appendPoll(poll, status) {
+        var pollDiv = document.createElement("form");
+        pollDiv.className = "poll";
+        console.log(poll);
+
+        var pollLabel = document.createElement("strong");
+        pollLabel.innerText = "Poll:";
+        pollDiv.appendChild(pollLabel);
+
+        for (var i = 0; i < poll.options.length; i++) {
+          const option = poll.options[i];
+          console.log(option);
+          var optionDiv = document.createElement("div");
+          optionDiv.className = "pollOption";
+          const percentage =
+            option.votes_count == 0
+              ? "0%"
+              : ((option.votes_count / poll.votes_count) * 100).toFixed(0) +
+                "%";
+
+          var optionInner = document.createElement("div");
+          optionInner.className = "pollOptionInner";
+          optionInner.style.width = percentage;
+          optionDiv.appendChild(optionInner);
+          var optionTitle = document.createElement("span");
+          if (poll.multiple) {
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.name = "choice";
+            checkbox.style.display = "inline-block";
+            checkbox.value = i;
+            optionTitle.appendChild(checkbox);
+          } else {
+            optionTitle.innerHTML = "";
+          }
+
+          optionTitle.innerHTML = option.title + " (" + percentage + ")";
+          optionTitle.style.display = "inline-block";
+          optionTitle.style.width = "max-content";
+          optionDiv.appendChild(optionTitle);
+
+          if (poll.voted || poll.expired) {
+            optionDiv.style.cursor = "not-allowed";
+            let allChildren = optionDiv.children;
+            for (let i = 0; i < allChildren.length; i++) {
+              allChildren[i].style.cursor = "not-allowed";
+            }
+          } else {
+            if (!poll.multiple) {
+              optionDiv.style.cursor = "pointer";
+              (function (choiceIndex) {
+                optionDiv.onclick = function () {
+                  console.log("Voting for " + option.title);
+                  grab(
+                    "/api/v1/polls/" + poll.id + "/votes",
+                    "POST",
+                    true,
+                    function (xhr) {
+                      if (xhr.status === 200) {
+                        console.log("Voted for " + option.title, choiceIndex);
+                        grab(
+                          "/api/v1/statuses/" + status.id,
+                          "GET",
+                          true,
+                          function (xhr) {
+                            if (xhr.status == 200) {
+                              status = JSON.parse(xhr.responseText);
+                              // Re-render the poll
+                              var newPollDiv = appendPoll(status.poll, status);
+                              pollDiv.parentNode.replaceChild(
+                                newPollDiv,
+                                pollDiv,
+                              );
+                            }
+                          },
+                        );
+                      } else {
+                        console.error("Failed to vote for " + option.title);
+                        alert("Failed to vote: " + xhr.responseText);
+                      }
+                    },
+                    JSON.stringify({ choices: [choiceIndex] }),
+                    "application/json",
+                  );
+                };
+              })(i);
+            }
+          }
+
+          pollDiv.appendChild(optionDiv);
+        }
+
+        if (poll.multiple && !poll.voted && !poll.expired) {
+          var submitButton = document.createElement("button");
+          // submitButton.type = "submit";
+          submitButton.innerText = "Submit";
+          submitButton.onclick = function () {
+            var choices = [];
+            var checkboxes = pollDiv.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+              if (checkboxes[i].checked) {
+                choices.push(parseInt(checkboxes[i].value));
+              }
+            }
+            console.log(choices);
+            grab(
+              "/api/v1/polls/" + poll.id + "/votes",
+              "POST",
+              true,
+              function (xhr) {
+                if (xhr.status === 200) {
+                  console.log("Voted for " + choices);
+                  grab(
+                    "/api/v1/statuses/" + status.id,
+                    "GET",
+                    true,
+                    function (xhr) {
+                      if (xhr.status == 200) {
+                        status = JSON.parse(xhr.responseText);
+                        // Re-render the poll
+                        var newPollDiv = appendPoll(status.poll, status);
+                        pollDiv.parentNode.replaceChild(newPollDiv, pollDiv);
+                      }
+                    },
+                  );
+                } else {
+                  console.error("Failed to vote for " + choices);
+                  alert("Failed to vote: " + xhr.responseText);
+                }
+              },
+              JSON.stringify({ choices: choices }),
+              "application/json",
+            );
+          };
+          pollDiv.appendChild(submitButton);
+        }
+
+        var votersInfo = document.createElement("div");
+        votersInfo.innerHTML =
+          "<br><br><span>" +
+          poll.voters_count +
+          (poll.voters_count === 1 ? " person " : " people ") +
+          " voted</span>";
+        pollDiv.appendChild(votersInfo);
+
+        return pollDiv;
+      }
+      var pollElement = appendPoll(status.poll, status);
+      statusDiv.appendChild(pollElement);
+    }
+
+    for (var i = 0; i < status.media_attachments.length; i++) {
+      let attachment = status.media_attachments[i];
+      switch (attachment.type) {
+        case "image":
+          var img = document.createElement("img");
+          img.src = attachment.preview_url;
+          if (attachment.description) {
+            img.alt = attachment.description;
+            img.title = attachment.description;
+          }
+          img.className = "attachment";
+          img.setAttribute("lazy", null);
+          img.setAttribute("data-src", attachment.url);
+          img.setAttribute(
+            "onclick",
+            'window.open("' + attachment.url + '", "_blank")',
+          );
+          statusDiv.appendChild(img);
+          break;
+        case "video":
+          appendVideo(attachment.url, statusDiv, attachment.description);
+          break;
+        case "gifv":
+          appendVideo(
+            attachment.url,
+            statusDiv,
+            true,
+            undefined,
+            true,
+            attachment.description,
+          );
+        case "audio":
+          var audio = document.createElement("audio");
+          audio.className = "attachment";
+          audio.controls = true;
+          if (attachment.description) {
+            audio.title = attachment.description;
+            audio.alt = attachment.description;
+          }
+          audio.src = attachment.url;
+          statusDiv.appendChild(audio);
+        default:
+          var attachmentLink = document.createElement("a");
+          fixupLinkInFrames(attachmentLink);
+          attachmentLink.className = "attachment";
+          attachmentLink.href = attachment.url;
+          attachmentLink.target = "_blank";
+          attachmentLink.innerHTML = attachment.url.split("/").pop();
+          statusDiv.appendChild(attachmentLink);
+      }
+    }
+  }
+
+  var postActions = document.createElement("div");
+  postActions.className = "postActions";
+
+  var replyButton = document.createElement("button");
+  replyButton.className = "postAction replyButton";
+  replyButton.innerHTML =
+    '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.6943 9.95996"><g><rect height="9.95996" opacity="0" width="12.6943" x="0" y="0"/><path d="M5.31152 9.95312C5.70117 9.95312 6.00195 9.66602 6.00195 9.27637L6.00195 7.28027L6.13867 7.28027C8.10742 7.28027 9.37891 7.77246 10.3633 9.53613C10.5684 9.90527 10.8418 9.95312 11.0879 9.95312C11.3955 9.95312 11.6895 9.67285 11.6895 9.16016C11.6895 5.28418 10.1172 2.67285 6.13867 2.67285L6.00195 2.67285L6.00195 0.717773C6.00195 0.328125 5.70117 0 5.29785 0C5.01074 0 4.81934 0.123047 4.49805 0.423828L0.259766 4.38867C0.0751953 4.57324 0 4.78516 0 4.97656C0 5.16113 0.0751953 5.37988 0.259766 5.55762L4.49805 9.57031C4.79199 9.83691 5.02441 9.95312 5.31152 9.95312ZM4.94238 8.62012C4.91504 8.62012 4.8877 8.60645 4.86719 8.58594L1.13477 5.03125C1.11426 5.01074 1.10059 4.99707 1.10059 4.97656C1.10059 4.95605 1.11426 4.94238 1.13477 4.92188L4.86719 1.3125C4.8877 1.29199 4.91504 1.27832 4.94238 1.27832C4.9834 1.27832 5.01074 1.30566 5.01074 1.34668L5.01074 3.4043C5.01074 3.52734 5.07227 3.58887 5.20215 3.58887L5.99512 3.58887C9.77539 3.58887 10.6914 6.30273 10.8213 8.51074C10.8213 8.54492 10.8008 8.55859 10.7871 8.55859C10.7734 8.55859 10.7666 8.55176 10.7529 8.51758C10.1377 7.27344 8.51074 6.35742 5.99512 6.35742L5.20215 6.35742C5.07227 6.35742 5.01074 6.41895 5.01074 6.54883L5.01074 8.55176C5.01074 8.59277 4.9834 8.62012 4.94238 8.62012Z"/></g></svg>&nbsp;<span class="btn-inner-text">' +
+    status.replies_count +
+    "</span></span>";
+  var link =
+    "/compose.html?reply_id=" +
+    status.id +
+    "&status_content" +
+    encodeURIComponent(truncate(status.content, 100));
+  if (status.account.id != myId) {
+    link += "&reply_to=" + status.account.acct;
+  }
+  console.log(link);
+  replyButton.onclick = function () {
+    window.open(link, "compose");
+  };
+  postActions.appendChild(replyButton);
+
+  var favButton = document.createElement("button");
+
+  favButton.className = "postAction favButton";
+  if (status.favourited) {
+    favButton.classList.add("active");
+  }
+
+  favButton.innerHTML =
+    '<span><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.5101 12.2842"><g><rect height="12.2842" opacity="0" width="12.5101" x="0" y="0"/><path d="M2.30386 11.3955C2.55679 11.5869 2.86441 11.5117 3.23355 11.2451L6.01577 9.20117L8.80484 11.2451C9.16714 11.5117 9.47476 11.5869 9.72769 11.3955C9.97378 11.2109 10.0216 10.8965 9.87124 10.4727L8.77066 7.19824L11.5802 5.18164C11.9494 4.92871 12.1066 4.64844 12.0041 4.34766C11.9084 4.06055 11.6212 3.91699 11.1701 3.92383L7.72476 3.95117L6.67886 0.65625C6.54214 0.225586 6.33023 0 6.01577 0C5.70816 0 5.49624 0.225586 5.35269 0.65625L4.30679 3.95117L0.861476 3.92383C0.410305 3.91699 0.130031 4.06055 0.027492 4.34766C-0.0682111 4.64844 0.0890155 4.92871 0.45132 5.18164L3.26089 7.19824L2.1603 10.4727C2.00991 10.8965 2.05777 11.2109 2.30386 11.3955ZM3.19937 10.1719C3.19253 10.1582 3.19253 10.1514 3.19937 10.124L4.24527 7.1709C4.32046 6.94531 4.27945 6.76758 4.07437 6.62402L1.49038 4.86035C1.46987 4.83984 1.46304 4.83301 1.46987 4.81934C1.47671 4.80566 1.48355 4.80566 1.51089 4.80566L4.64175 4.87402C4.88101 4.88086 5.0314 4.78516 5.10659 4.5459L5.98843 1.54492C5.99527 1.51758 6.0021 1.51074 6.01577 1.51074C6.02945 1.51074 6.03628 1.51758 6.04312 1.54492L6.92495 4.5459C7.00015 4.78516 7.15737 4.88086 7.39663 4.87402L10.5207 4.80566C10.548 4.80566 10.5548 4.80566 10.5617 4.81934C10.5685 4.83301 10.5617 4.83984 10.5412 4.86035L7.95718 6.62402C7.7521 6.76758 7.71109 6.94531 7.79312 7.1709L8.83218 10.124C8.83902 10.1514 8.83902 10.1582 8.83218 10.1719C8.82534 10.1855 8.81167 10.1719 8.79116 10.1582L6.30972 8.25098C6.12515 8.10059 5.91323 8.10059 5.72183 8.25098L3.24722 10.1582C3.22671 10.1719 3.21304 10.1855 3.19937 10.1719Z"/></g></svg>&nbsp;<span class="inner">' +
+    status.favourites_count +
+    "</span></span>";
+  favButton.onclick = function () {
+    const endpoint =
+      "/api/v1/statuses/" +
+      status.id +
+      (favButton.classList.contains("active") ? "/unfavourite" : "/favourite");
+    console.log(domain + endpoint);
+    grab(endpoint, "POST", true, function (xhr) {
+      if (xhr.status === 200) {
+        favButton.classList.toggle("active");
+        var favCount = favButton.querySelector(".inner");
+        console.log(parseInt(favCount.innerHTML));
+        favCount.innerHTML =
+          parseInt(favCount.innerHTML) +
+          (favButton.classList.contains("active") ? 1 : -1);
+      } else {
+        alert("Error: " + xhr.responseText);
+      }
+    });
+  };
+  postActions.appendChild(favButton);
+
+  var repostButton = document.createElement("button");
+  repostButton.className = "postAction repostButton";
+  if (status.reblogged) {
+    repostButton.classList.add("active");
+  }
+  repostButton.innerHTML =
+    '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 13.8002 9.97363"><g><rect height="9.97363" opacity="0" width="13.8002" x="0" y="0"/><path d="M0.149631 3.72559C0.361545 3.93066 0.648654 3.91016 0.860568 3.71191L1.31858 3.25391L2.03635 2.48828L2.03635 8.25098C2.03635 9.39941 2.6174 9.97363 3.77951 9.97363L7.94944 9.97363C8.3049 9.97363 8.50998 9.7959 8.50315 9.48145C8.49631 9.16699 8.3049 8.98242 7.94944 8.98242L3.79319 8.98242C3.301 8.98242 3.02072 8.72266 3.02072 8.20312L3.02072 2.47461L3.74533 3.25391L4.20334 3.71191C4.41526 3.91016 4.70237 3.93066 4.91428 3.72559C5.11936 3.52051 5.11252 3.21289 4.90061 3.01465L3.15061 1.27148C2.75412 0.875 2.30979 0.875 1.90647 1.27148L0.163303 3.01465C-0.0486115 3.21289-0.0554475 3.52051 0.149631 3.72559ZM4.81858 0.505859C4.81858 0.820312 5.00998 0.998047 5.36545 0.998047L9.52854 0.998047C10.0207 0.998047 10.301 1.26465 10.301 1.77734L10.301 7.50586L9.57639 6.72656L9.11838 6.27539C8.90647 6.07031 8.61936 6.0498 8.40744 6.26172C8.20237 6.45996 8.2092 6.76758 8.42112 6.96582L10.1643 8.70898C10.5676 9.10547 11.0119 9.10547 11.4084 8.70898L13.1584 6.96582C13.3703 6.76758 13.3772 6.45996 13.1721 6.26172C12.9602 6.0498 12.6731 6.07031 12.4612 6.27539L11.9963 6.72656L11.2854 7.49902L11.2854 1.72949C11.2854 0.581055 10.7043 0.00683594 9.54221 0.00683594L5.36545 0.00683594C5.00998 0.00683594 4.81174 0.18457 4.81858 0.505859Z"/></g></svg>&nbsp;<span class="inner">' +
+    status.reblogs_count +
+    "</span></span>";
+  repostButton.onclick = function () {
+    const endpoint =
+      "/api/v1/statuses/" +
+      status.id +
+      (repostButton.classList.contains("active") ? "/unreblog" : "/reblog");
+    console.log(domain + endpoint);
+    grab(endpoint, "POST", true, function (xhr) {
+      if (xhr.status === 200) {
+        repostButton.classList.toggle("active");
+        var boostCount = repostButton.querySelector(".inner");
+        console.log(parseInt(boostCount.innerHTML));
+        boostCount.innerHTML =
+          parseInt(boostCount.innerHTML) +
+          (repostButton.classList.contains("active") ? 1 : -1);
+      } else {
+        alert("Error: " + xhr.responseText);
+      }
+    });
+  };
+  postActions.appendChild(repostButton);
+
+  reactButton = document.createElement("button");
+  reactButton.className = "postAction reactButton";
+  reactButton.innerHTML =
+    '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17.4727 14.9494"><g><rect height="14.9494" opacity="0" width="17.4727" x="0" y="0"/><path d="M14.2563 7.43914L14.2352 7.85627C14.131 7.84485 14.025 7.84 13.918 7.84C13.6665 7.84 13.4209 7.86658 13.1842 7.91797C13.2019 7.76087 13.2104 7.60102 13.2104 7.43914C13.2104 4.96453 11.2075 2.9616 8.73289 2.9616C6.25829 2.9616 4.26219 4.96453 4.26219 7.43914C4.26219 9.91375 6.25829 11.9167 8.73289 11.9167C9.313 11.9167 9.86719 11.8066 10.3739 11.6026C10.3906 11.9627 10.4655 12.3078 10.5902 12.6292C10.0117 12.8427 9.38547 12.9557 8.73289 12.9557C5.6909 12.9557 3.2163 10.488 3.2163 7.43914C3.2163 4.39032 5.6909 1.92254 8.73289 1.92254C11.7817 1.92254 14.2563 4.39032 14.2563 7.43914Z"/><path d="M10.6333 9.0319C10.6333 9.40106 9.86766 10.153 8.72606 10.153C7.59129 10.153 6.82567 9.40106 6.82567 9.0319C6.82567 8.89519 6.9624 8.82683 7.09911 8.88152C7.50243 9.07292 7.94676 9.31218 8.72606 9.31218C9.51219 9.31218 9.95653 9.07292 10.3598 8.88152C10.4966 8.82683 10.6333 8.89519 10.6333 9.0319ZM7.81689 6.22234C7.81689 6.66667 7.50243 6.9743 7.14696 6.9743C6.79833 6.9743 6.49071 6.66667 6.49071 6.22234C6.49071 5.76433 6.79833 5.45671 7.14696 5.45671C7.50243 5.45671 7.81689 5.76433 7.81689 6.22234ZM10.9751 6.22234C10.9751 6.66667 10.6675 6.9743 10.312 6.9743C9.95653 6.9743 9.65574 6.66667 9.65574 6.22234C9.65574 5.76433 9.95653 5.45671 10.312 5.45671C10.6675 5.45671 10.9751 5.76433 10.9751 6.22234Z"/><path d="M16.6729 11.3947C16.6729 12.8986 15.4083 14.1496 13.918 14.1496C12.4073 14.1496 11.1563 12.9123 11.1563 11.3947C11.1563 9.88394 12.4073 8.63981 13.918 8.63981C15.4287 8.63981 16.6729 9.88394 16.6729 11.3947ZM13.5626 10.0343L13.5626 11.0392L12.5577 11.0392C12.3458 11.0392 12.2022 11.1828 12.2022 11.3947C12.2022 11.6066 12.3458 11.7502 12.5577 11.7502L13.5626 11.7502L13.5626 12.755C13.5626 12.967 13.6993 13.1105 13.918 13.1105C14.1299 13.1105 14.2735 12.967 14.2735 12.755L14.2735 11.7502L15.2784 11.7502C15.4903 11.7502 15.627 11.6066 15.627 11.3947C15.627 11.1828 15.4903 11.0392 15.2784 11.0392L14.2735 11.0392L14.2735 10.0343C14.2735 9.82241 14.1299 9.67886 13.918 9.67886C13.6993 9.67886 13.5626 9.82241 13.5626 10.0343Z"/></g></svg></span>';
+  reactButton.onclick = function () {
+    var pickerFrame = document.createElement("iframe");
+    pickerFrame.src = "/emoji.html?post_id=" + status.id;
+    pickerFrame.style.height = "8em";
+    pickerFrame.width = "100%";
+    statusDiv.appendChild(pickerFrame);
+  };
+
+  postActions.appendChild(reactButton);
+
+  statusDiv.appendChild(postActions);
+
+  if (status.reactions && status.reactions.length > 0) {
+    statusDiv.appendChild(addReactions(status.reactions, status));
+  }
+  var xtraDetails = document.createElement("div");
+  xtraDetails.className = "xtraDetails";
+
+  var date = document.createElement("span");
+  date.innerHTML = new Date(status.created_at).toLocaleString();
+  xtraDetails.appendChild(date);
+
+  if (status.application) {
+    xtraDetails.innerHTML += " via ";
+    if (status.application.website) {
+      var application = document.createElement("a");
+      application.target = "_blank";
+      application.href = status.application.website;
+      application.innerHTML = status.application.name;
+      fixupLinkInFrames(application);
+    } else {
+      var application = document.createElement("span");
+      application.innerHTML = status.application.name;
+    }
+
+    xtraDetails.appendChild(application);
+  }
+
+  statusDiv.appendChild(xtraDetails);
+  return statusDiv;
+}
+
+function addReactions(reactions, status) {
+  console.log(reactions);
+  var reactionDiv = document.createElement("div");
+  reactionDiv.className = "reactions";
+  for (var i = 0; i < reactions.length; i++) {
+    const reaction = reactions[i];
+    console.log(reaction);
+    var btn = document.createElement("button");
+    btn.className = "reaction";
+
+    btn.onclick = function () {
+      if (reaction.me) {
+        react(status.id, reaction.name, true);
+      } else {
+        react(status.id, reaction.name, false);
+      }
+
+      if (window.location.pathname == "/post.html") {
+        window.location.reload(); // workaround for this stuff just not working
+      }
+
+      reactionDiv.replaceWith(addReactions(reactions, status));
+    };
+
+    if (reaction.me) {
+      btn.className += " me";
+    }
+    var inner = document.createElement("span");
+    inner.className = "btn-inner";
+    if (reaction.url) {
+      inner.innerHTML =
+        "<img src='" +
+        reaction.url +
+        "' class='reactionImage' alt='" +
+        reaction.name +
+        "' title='" +
+        reaction.name +
+        "' />";
+    } else {
+      inner.innerHTML = '<span class="inner">' + reaction.name + "</span>";
+    }
+
+    btn.appendChild(inner);
+
+    var cnt = document.createElement("span");
+    cnt.className = "reactionCount";
+    cnt.innerHTML = reaction.count;
+    btn.appendChild(cnt);
+
+    reactionDiv.appendChild(btn);
+  }
+  return reactionDiv;
+}
+
+function appendTimelineNavBar(timelineType) {
+  if (window.self !== window.top) return; // don't add the navbar in deck mode
+
+  var navbar = document.createElement("nav");
+  navbar.id = "navbar";
+
+  var leftDiv = document.createElement("div");
+  leftDiv.style.float = "left";
+
+  var timelinesLabel = document.createElement("span");
+  timelinesLabel.innerHTML = "Timelines: ";
+  leftDiv.appendChild(timelinesLabel);
+
+  var homeLink = document.createElement("a");
+  homeLink.href = "following.html";
+  homeLink.innerHTML = "Home | ";
+  fixupLinkInFrames(homeLink);
+  leftDiv.appendChild(homeLink);
+
+  var localLink = document.createElement("a");
+  localLink.href = "local.html";
+  localLink.innerHTML = "Local | ";
+  fixupLinkInFrames(localLink);
+  leftDiv.appendChild(localLink);
+
+  var federatedLink = document.createElement("a");
+  federatedLink.href = "federated.html";
+  federatedLink.innerHTML = "Federated";
+  fixupLinkInFrames(federatedLink);
+  leftDiv.appendChild(federatedLink);
+
+  navbar.appendChild(leftDiv);
+
+  var rightDiv = document.createElement("div");
+  rightDiv.style.float = "right";
+
+  var notificationsLink = document.createElement("a");
+  notificationsLink.href = "/notifications.html";
+  notificationsLink.innerHTML = "Notifications | ";
+  fixupLinkInFrames(notificationsLink);
+  rightDiv.appendChild(notificationsLink);
+
+  var profileLink = document.createElement("a");
+  profileLink.href = "/user.html?id=" + myId;
+  profileLink.innerHTML = "My Profile";
+  fixupLinkInFrames(profileLink);
+  rightDiv.appendChild(profileLink);
+
+  navbar.appendChild(rightDiv);
+
+  document.body.appendChild(navbar);
+}
+
+function getCurrentUserId() {
+  grab("/api/v1/accounts/verify_credentials", "GET", false, function (xhr) {
+    if (xhr.status == 200) {
+      var response = JSON.parse(xhr.responseText);
+      console.debug(response.id);
+      myId = response.id;
+      localStorage.setItem("myId", myId);
+    } else {
+      console.log(xhr.responseText);
+    }
+  });
+}
+
+function getPost() {
+  const postId = getSearchParam("id");
+  if (postId != null) {
+    var posts = [],
+      isReblog = false;
+    console.log(postId);
+    grab(
+      "/api/v1/statuses/" + postId + "/context",
+      "GET",
+      false,
+      function (xhr) {
+        if (xhr.status == 200) {
+          let response = JSON.parse(xhr.responseText);
+          console.log(
+            response,
+            response.ancestors.length,
+            response.descendants.length,
+          );
+
+          function appendStatuses(statuses) {
+            for (var i = 0; i < statuses.length; i++) {
+              const status = statuses[i];
+              console.log(status);
+
+              var indent = 0; // our indent, in px
+
+              if (status.in_reply_to_id) {
+                indent = 25;
+                let parentId = status.in_reply_to_id;
+                while (parentId) {
+                  indent = min(indent + 25, window.innerWidth / 3);
+                  let foundParent = false;
+                  for (var j = 0; j < i; j++) {
+                    if (statuses[j].id == parentId) {
+                      parentId = statuses[j].in_reply_to_id;
+                      foundParent = true;
+                      break;
+                    }
+                  }
+                  if (!foundParent) {
+                    parentId = null;
+                  }
+                }
+              }
+              console.log(indent);
+              document.body.appendChild(
+                appendStatus(status, "expanded", indent),
+              );
+            }
+          }
+
+          appendStatuses(response.ancestors);
+
+          grab("/api/v1/statuses/" + postId, "GET", false, function (xhr) {
+            if (xhr.status == 200) {
+              var response = JSON.parse(xhr.responseText);
+              console.log(response);
+              document.body.appendChild(appendStatus(response, "expanded"));
+              const el = document.body.querySelector(".status.id-" + postId);
+              el.classList.add("highlight");
+              el.scrollIntoView();
+            }
+          });
+
+          appendStatuses(response.descendants);
+        } else {
+          window.location.href =
+            "/error.html?error=" +
+            truncate(
+              encodeURIComponent(
+                "Endpoint /api/v1/statuses/" +
+                  postId +
+                  "/context returned code " +
+                  xhr.status +
+                  "\n" +
+                  xhr.responseText,
+              ),
+              2000,
+            );
+        }
+      },
+    );
+  } else {
+    document.write("No post ID specified");
+  }
+}
+
+function getUserPage() {
+  const userId = getSearchParam("id");
+  const after = getSearchParam("after");
+  addComposeBtn();
+  if (userId != null) {
+    if (userId == myId) {
+      console.log("My profile");
+      var logOutButton = document.createElement("button");
+      logOutButton.innerHTML = "Log out";
+      logOutButton.onclick = function () {
+        logOut();
+      };
+      logOutButton.style.float = "right";
+      logOutButton.style.backgroundColor = "red";
+      logOutButton.style.color = "white";
+      logOutButton.style.border = "none";
+      logOutButton.style.padding = "5px";
+      logOutButton.style.borderRadius = "5px";
+      document.body.appendChild(logOutButton);
+    }
+
+    grab("/api/v1/accounts/" + userId, "GET", false, function (xhr) {
+      if (xhr.status == 200) {
+        var user = JSON.parse(xhr.responseText);
+        console.log(user);
+        var header = document.createElement("header");
+        header.id = "userHeader";
+        function adjustHeaderSize() {
+          const width = document.documentElement.clientWidth,
+            height = document.documentElement.clientHeight;
+          if (width / height > 1.2) {
+            header.style.width = "70%";
+            header.style.height = Math.max(100, width / 6) + "px";
+          } else {
+            header.style.width = "100%";
+            header.style.height = Math.max(100, height / 4) + "px";
+          }
+        }
+        if (user.header) {
+          header.style.backgroundImage = "url(" + user.header + ")";
+          header.style.backgroundSize = "cover";
+          header.style.backgroundPosition = "center";
+        }
+        header.style.margin = "0 auto";
+        adjustHeaderSize();
+        window.onresize = adjustHeaderSize;
+        var overlay = document.createElement("div");
+        overlay.id = "headerOverlay";
+        if (user.header) {
+          overlay.style.backgroundImage =
+            "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.75))";
+        }
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.color = "white";
+
+        var userInfo = document.createElement("div");
+        userInfo.id = "userInfo";
+        userInfo.style.marginTop = "25px";
+        userInfo.style.display = "inline-block";
+        userInfo.style.textAlign = "left";
+        userInfo.style.verticalAlign = "top";
+        userInfo.style.width = "80%";
+
+        var avatar = document.createElement("img");
+        avatar.id = "userAvatar";
+        avatar.src = user.avatar;
+        avatar.style.width = "10%";
+        avatar.style.height = "auto";
+        avatar.style.borderRadius = "50%";
+        avatar.style.verticalAlign = "middle";
+        avatar.style.float = "left";
+        avatar.style.marginTop = "7%";
+        avatar.style.marginLeft = "20px";
+        avatar.style.marginRight = "20px";
+        overlay.appendChild(avatar);
+        overlay.appendChild(userInfo);
+
+        var userNameDiv = document.createElement("div");
+        userNameDiv.id = "userNameDiv";
+        userNameDiv.style.display = "inline-block";
+        userNameDiv.style.verticalAlign = "middle";
+        userNameDiv.style.width = "100%";
+
+        var displayName = document.createElement("h1");
+        displayName.id = "displayName";
+        displayName.style.marginRight = "10px";
+        displayName.style.width = "max-content";
+        displayName.innerHTML = user.display_name;
+        interpolateEmoji(displayName, user.emojis);
+        userNameDiv.appendChild(displayName);
+
+        var userHandle = document.createElement("h3");
+        userHandle.id = "userHandle";
+        userHandle.style.marginRight = "20px";
+        userHandle.style.width = "max-content";
+        if (user.acct.split("@").length > 1) {
+          userHandle.innerHTML = "@" + user.acct;
+        } else {
+          userHandle.innerHTML = "@" + user.acct + "@" + domain.split("://")[1];
+        }
+        userNameDiv.appendChild(userHandle);
+
+        if (userId != myId) {
+          console.log("Not my profile");
+          isFollowingUser(userId, function (follows) {
+            var followBtn = document.createElement("button");
+            followBtn.id = "followBtn";
+            followBtn.innerHTML = follows ? "Unfollow" : "Follow";
+            followBtn.style.fontSize = "1.1em";
+            followBtn.style.fontWeight = "600";
+            followBtn.onclick = function () {
+              changeFollowStatus(follows, userId, function (success) {
+                if (success) {
+                  follows = !follows;
+                  followBtn.innerHTML = follows ? "Unfollow" : "Follow";
+                } else {
+                  alert("Error changing follow status");
+                }
+              });
+            };
+            followBtn.style.float = "right";
+            followBtn.style.position = "relative";
+            followBtn.style.bottom = "50px";
+            userNameDiv.appendChild(followBtn);
+          });
+        }
+
+        userInfo.appendChild(userNameDiv);
+
+        var userStats = document.createElement("div");
+        userStats.style.display = "block";
+        userStats.style.textAlign = "center";
+        userStats.style.verticalAlign = "bottom";
+        userStats.style.margin = "10px";
+
+        var followsCount = document.createElement("span");
+        followsCount.innerHTML = "Follows: " + user.following_count + " ";
+        userStats.appendChild(followsCount);
+
+        var followersCount = document.createElement("span");
+        followersCount.innerHTML = "• Followers: " + user.followers_count;
+        userStats.appendChild(followersCount);
+        overlay.appendChild(userStats);
+
+        header.appendChild(overlay);
+
+        document.body.appendChild(header);
+
+        var bio = document.createElement("div");
+        bio.id = "bio";
+        bio.innerHTML = user.note;
+
+        interpolateEmoji(bio, user.emojis);
+
+        document.body.appendChild(bio);
+
+        var table = document.createElement("table");
+        table.id = "userTable";
+        for (var i = 0; i < user.fields.length; i++) {
+          const field = user.fields[i];
+          var row = document.createElement("tr");
+
+          if (field.verified_at) {
+            row.classList = "verified";
+          }
+
+          var key = document.createElement("td");
+          key.innerHTML = field.name;
+          row.appendChild(key);
+
+          var value = document.createElement("td");
+          value.innerHTML = field.value;
+          row.appendChild(value);
+
+          table.appendChild(row);
+        }
+        document.body.appendChild(table);
+
+        var timeline = document.createElement("div");
+        timeline.id = "timeline";
+
+        if (after != null) {
+          var newestButton = document.createElement("a");
+          newestButton.id = "newestBtn";
+          newestButton.href = window.location.pathname;
+          newestButton.innerHTML = "Jump to the latest ";
+          fixupLinkInFrames(newestButton);
+          timeline.appendChild(newestButton);
+        }
+
+        grab(
+          "/api/v1/accounts/" +
+            userId +
+            "/statuses" +
+            "?limit=40" +
+            (after != null ? "&max_id=" + after : ""),
+          "GET",
+          true,
+          function (postsXhr) {
+            if (postsXhr.status == 200) {
+              var posts = JSON.parse(postsXhr.responseText);
+              console.log(posts);
+              for (var i = 0; i < posts.length; i++) {
+                timeline.appendChild(appendStatus(posts[i], "user"));
+                if (i == posts.length - 1) {
+                  var lastPostId = posts[i].id,
+                    olderButton = document.createElement("a");
+                  olderButton.href =
+                    window.location.pathname +
+                    "?id=" +
+                    userId +
+                    "&after=" +
+                    lastPostId;
+                  olderButton.innerHTML = "View older posts";
+                  fixupLinkInFrames(olderButton);
+                  timeline.appendChild(olderButton);
+                  olderButton.id = "olderBtn";
+                }
+              }
+              document.body.appendChild(timeline);
+            } else {
+              window.location.href =
+                "/error.html?error=" +
+                truncate(
+                  encodeURIComponent(
+                    "Endpoint /api/v1/accounts/" +
+                      userId +
+                      "/statuses returned code " +
+                      postsXhr.status +
+                      " and readyState " +
+                      postsXhr.readyState +
+                      "\n" +
+                      postsXhr.responseText,
+                  ),
+                  2000,
+                );
+            }
+          },
+        );
+      } else {
+        window.location.href =
+          "/error.html?error=" +
+          truncate(
+            encodeURIComponent(
+              "Endpoint /api/v1/accounts/" +
+                userId +
+                " returned code " +
+                xhr.status +
+                " and readyState " +
+                xhr.readyState +
+                "\n" +
+                xhr.responseText,
+            ),
+            2000,
+          );
+      }
+    });
+  } else {
+    document.write("No user ID specified");
+  }
+}
+
+function isFollowingUser(userId, callback) {
+  grab(
+    "/api/v1/accounts/relationships?id=" + userId,
+    "GET",
+    true,
+    function (xhr) {
+      if (xhr.status == 200) {
+        if (callback) {
+          var response = JSON.parse(xhr.responseText);
+          callback(response[0].following);
+        }
+      } else {
+        if (callback) {
+          callback(false);
+        }
+      }
+    },
+  );
+}
+
+function changeFollowStatus(currentlyFollowing, id, callback) {
+  grab(
+    "/api/v1/accounts/" + id + (currentlyFollowing ? "/unfollow" : "/follow"),
+    "POST",
+    true,
+    function (xhr) {
+      if (xhr.status == 200) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    },
+  );
+}
+
+function react(postId, emojiId, removeReaction) {
+  var response;
+  grab(
+    "/api/v1/statuses/" +
+      postId +
+      (removeReaction === true ? "/unreact/" : "/react/") +
+      emojiId,
+    "POST",
+    false,
+    function (xhr) {
+      if (xhr.status == 200) {
+        alert("Reaction added!");
+        response = JSON.parse(xhr.responseText);
+      } else {
+        alert("Error adding reaction: " + xhr.responseText);
+      }
+    },
+  );
+  return response;
+}
+
+function addComposeBtn() {
+  if (window.self !== window.top) return; // don't add the compose button in deck mode
+  let newPostButton = document.createElement("a");
+  fixupLinkInFrames(newPostButton);
+  newPostButton.id = "newBtn";
+  newPostButton.href = "/compose.html";
+  newPostButton.innerHTML = "New Post";
+  document.body.appendChild(newPostButton);
+}
+
+if (myId == null || myId == "undefined") {
+  getCurrentUserId();
+}
+
+window.addEventListener("message", function (e) {
+  console.log("[TL]", e);
+  if (e.data.type == "emoji-insert" && e.data.postId) {
+    // this is a reaction for sure.
+    console.log(e.data.type, e.data.data, e.data.id);
+    const response = react(e.data.postId, e.data.data);
+    const frames = document.getElementsByTagName("iframe");
+    for (var i = 0; i < frames.length; i++) {
+      const id = frames[i].src.split("post_id=")[1];
+      console.log(frames[i].src, id);
+      if (id == e.data.postId) {
+        const reacts = frames[i].parentNode.querySelector(".reactions");
+        if (reacts && reacts.reactions && reacts.reactions.length > 0) {
+          reacts.replaceWith(addReactions(response.reactions, response));
+        }
+        frames[i].remove();
+        break;
+      }
+    }
+  } else if (e.data.type == "timeline-update-request") {
+    window.location.reload();
+  }
+});

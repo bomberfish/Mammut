@@ -1,0 +1,542 @@
+* {
+    color-scheme: light
+}
+
+@font-face {
+    font-family: "SystemEmoji";
+    src: local("Apple Color Emoji"),
+        local("Segoe UI Emoji"),
+        local("Noto Color Emoji"),
+        local("Segoe UI Symbol"),
+        local("EmojiOneMozilla"),
+        local("TwemojiMozilla"),
+        local("EmojiMozilla");
+}
+
+@font-face {
+    font-family: "RemoteEmoji";
+    src: url("/assets/font/NotoColorEmoji-Regular.eot");
+    src: url("/assets/font/NotoColorEmoji-Regular.eot?#iefix") format("embedded-opentype"),
+        url("/assets/font/NotoColorEmoji-Regular.woff2") format("woff2"),
+        url("/assets/font/NotoColorEmoji-Regular.woff") format("woff"),
+        url("/assets/font/NotoColorEmoji-Regular.ttf") format("truetype"),
+        url("/assets/font/NotoEmoji-Regular.svg#NotoEmoji-Regular") format("svg");
+}
+
+body,
+button,
+caption,
+dd,
+div,
+dl,
+dt,
+fieldset,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+label,
+legend,
+li,
+ol,
+optgroup,
+option,
+p,
+select,
+span,
+table,
+td,
+textarea,
+textfield,
+th,
+tr,
+ul {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Lucida Grande", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "BBAlpha Sans", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif, serif, monospace, "SystemEmoji", "RemoteEmoji";
+}
+
+.status,
+textarea,
+.notificationItem {
+    background-color: #e0e2e5;
+}
+
+textarea {
+    border: 1px solid #454547;
+    color: #000;
+    border-radius: .25em;
+    -moz-border-radius: .25em;
+    -webkit-border-radius: .25em;
+    padding: .5em
+}
+
+body {
+    background-color: #fdfdff;
+    color: #000002;
+}
+
+a,
+a:visited {
+    color: #007bff;
+    text-decoration: none
+}
+
+a:hover {
+    text-decoration: underline
+}
+
+a.subdued {
+    color: #454548;
+}
+
+.status {
+    padding: .25em .5em;
+    margin-block: .5em;
+    margin-inline: .1em;
+    cursor: pointer;
+}
+
+.status>*>p {
+    width: fit-content;
+}
+
+.status>div>p {
+    cursor: text;
+}
+
+:disabled {
+    cursor: not-allowed;
+}
+
+#timeline {
+    padding-top: 2em;
+}
+
+.xtraDetails {
+    font-size: .8em;
+    margin-block: 1em;
+    margin-left: .1em;
+}
+
+.xtraDetails,
+.xtraDetails>* {
+    color: #454548 !important;
+}
+
+#newBtn,
+#olderBtn,
+.attachment,
+.status {
+    border-radius: .25em;
+    -moz-border-radius: .25em;
+    -webkit-border-radius: .25em
+}
+
+.attachment {
+    display: block;
+    margin: .5em 0;
+    padding: .5em;
+    border: 1px solid #454547;
+    background-color: #dfdfe2;
+    min-width: 7em;
+    max-width: 25em;
+    height: auto;
+    resize: both;
+    overflow: auto;
+}
+
+img.attachment {
+    cursor: zoom-in;
+}
+
+/* video.attachment,
+object.attachment {
+    min-width: 5em;
+    max-width: 30em;
+    height: auto;
+} */
+
+
+#newBtn,
+#olderBtn {
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+    text-decoration: none;
+    color: #fdfdff;
+    background-color: #007bff;
+    padding: .25em .5em;
+    font-size: 1.2em
+}
+
+#newBtn {
+    position: fixed;
+    bottom: 1em;
+    right: 1em
+}
+
+#olderBtn {
+    text-align: center
+}
+
+#ipa {
+    color: #414144;
+    font-weight: 400;
+    font-size: .5em;
+    font-style: oblique;
+    position: relative;
+    top: -.25em;
+    left: .25em
+}
+
+.postlabel {
+    font-size: .8em;
+    color: #454548;
+    margin-bottom: .25em
+}
+
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 6px;
+    background-color: #fdfdff;
+    color: #000002;
+}
+
+.spoiler {
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.postAction,
+.reaction {
+    margin-right: 0.3em;
+    padding-bottom: 0.3em;
+    /* height: 1.5em; */
+}
+
+
+.postActions,
+.reactions {
+    margin: 0.2em;
+    margin-top: 0.6em;
+}
+
+.reaction.me {
+    filter: opacity(0.5);
+    -webkit-filter: opacity(0.5);
+    -moz-filter: opacity(0.5);
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
+}
+
+button svg {
+    display: inline;
+    fill: #000002 !important;
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    top: 0.3em;
+}
+
+button .btn-inner-text {
+    position: relative;
+    bottom: 0.15em;
+}
+
+.repostButton.active svg {
+    fill: green !important;
+}
+
+.favButton.active svg {
+    fill: #ff9944 !important;
+}
+
+.reaction>*,
+.postAction>* {
+    vertical-align: middle;
+}
+
+.reaction .inner {
+    font-family: "LocalEmoji", "RemoteEmoji", sans-serif;
+    font-size: 1.3em;
+    height: 1.5em;
+}
+
+button {
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.emote {
+    min-width: 1.1em;
+    height: 1.1em;
+    display: inline-block;
+    position: relative;
+    top: 0.275em;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    transition: width 0.1s, height 0.1s, top 0.1s;
+}
+
+.emote:hover {
+    min-width: 1.5em;
+    height: 1.5em;
+    top: 0.1em;
+    transition: width 0.1s, height 0.1s, top 0.1s;
+}
+
+.picker-grid .emote {
+    min-width: 2em;
+    height: 2em;
+    margin: 0.1em;
+    top: 0.5em;
+    cursor: pointer;
+}
+
+.picker-grid .emote:hover {
+    min-width: 2em;
+    height: 2em;
+    top: 0.5em;
+}
+
+/* .picker-grid {
+    width: 16em;
+} */
+
+.poll {
+    width: 100%;
+}
+
+.poll>span {
+    font-size: .8em;
+    color: #454548;
+}
+
+.pollOption {
+    height: 1.75em;
+    margin: 0.2em;
+}
+
+.pollOptionInner {
+    height: 1.5em;
+    padding-left: 0.25em;
+    padding-bottom: 0;
+    padding-top: 0.5em;
+    background-color: #007bff88;
+    border-radius: 0.25em;
+    position: relative;
+    top: 100%;
+    left: 0;
+}
+
+.pollOption * {
+    z-index: 2;
+}
+
+.pollOptionInner {
+    z-index: 0;
+}
+
+.pollOption,
+.pollOption>span {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#userTable {
+    border-collapse: collapse;
+}
+
+#userTable td {
+    padding: 0.3em;
+}
+
+
+#userTable,
+#userTable td {
+    border: 1px solid #454547;
+}
+
+#userTable tr.verified {
+    background-color: #ccffcc55;
+}
+
+#userTable tr.verified * {
+    color: #006600;
+}
+
+#userHeader {
+    background-color: #fdfdff;
+}
+
+.reactionImage {
+    height: 1.5rem;
+    width: auto;
+}
+
+#notificationList {
+    list-style: none;
+    padding: 0;
+}
+
+.notificationItem {
+    padding: 0.5em;
+    margin-block: 0.8em;
+    border-radius: 0.25em;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+}
+
+.status.highlight {
+    background-color: #bb77003f;
+}
+
+#bio {
+    margin-block: 1em;
+}
+
+#sacrifice,
+.sacrifice {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+frame {
+    border-right: 2px solid #bababa;
+}
+
+frame#rightmost {
+    border-right: none;
+}
+
+.status div {
+    width: fit-content;
+}
+
+iframe[src^="/emoji.html"] {
+    border: 1px solid #454547;
+    resize: vertical;
+    margin-bottom: 0.5em;
+}
+
+@media (prefers-color-scheme:light) {
+    textarea {
+        background-color: unset;
+        border: 1px solid #454548;
+        color: unset;
+    }
+}
+
+@media (prefers-color-scheme:dark) {
+    * {
+        color-scheme: dark;
+    }
+
+    button svg {
+        fill: #fdfdff !important;
+    }
+
+    .repostButton.active svg {
+        fill: #55ff88 !important;
+    }
+
+    .favButton.active svg {
+        fill: yellow !important;
+    }
+
+
+    body {
+        background-color: #121216;
+        color: #fdfdff;
+    }
+
+    a,
+    a:visited {
+        color: #3898ff
+    }
+
+    a.subdued {
+        color: #6f6f82;
+    }
+
+    .notificationItem,
+    .status {
+        background-color: #212124
+    }
+
+    .attachment {
+        border-color: #454547;
+        background-color: #313134;
+    }
+
+    #newBtn,
+    #olderBtn {
+        background-color: #3898ff;
+        color: #fdfdff;
+    }
+
+    textarea {
+        background-color: unset;
+        color: unset;
+    }
+
+    #ipa,
+    .postlabel {
+        color: #dfdfe2;
+    }
+
+    #navbar {
+        background-color: #121216;
+        color: #fdfdff;
+        z-index: 100;
+    }
+
+    .xtraDetails,
+    .xtraDetails * {
+        color: #aeaeb2 !important;
+    }
+
+    .poll>span {
+        color: #dfdfe2;
+    }
+
+    #userTable,
+    #userTable td {
+        border-color: #454547;
+    }
+
+    #userTable tr.verified {
+        background-color: #55ff8822;
+    }
+
+    #userTable tr.verified * {
+        color: #11ff22 !important;
+    }
+
+    frame {
+        border-color: #454547;
+    }
+
+    .status.highlight {
+        background-color: #ffcc0039;
+    }
+
+    #userHeader {
+        background-color: #121216;
+    }
+}

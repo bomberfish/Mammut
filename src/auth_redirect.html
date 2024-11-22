@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="text/javascript" src="/util.js"></script>
+  </head>
+
+  <body>
+    <h1>Redirecting...</h1>
+  </body>
+  <script>
+    const code = getSearchParam("code");
+    if (code) {
+      localStorage.setItem("auth_code", code);
+      window.location.href = "/auth.html";
+    } else {
+      window.location.href = "error.html?error=" + urlParams.get("error");
+    }
+  </script>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Compose</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <script>
+      const inReplyTo = getSearchParam("reply_id");
+      var token = localStorage.getItem("access_token");
+      var domain = localStorage.getItem("instanceDomain");
+
+      window.addEventListener("message", function (e) {
+        console.log("[COMPOSE]", e);
+        if (e.data.type == "emoji-insert") {
+          form.content.value += ":" + e.data.data + ":";
+        }
+      });
+
+      var attachments = [];
+
+      var alts = [];
+
+      function post() {
+        var content = form.content.value;
+
+        uploadFile();
+        var data;
+        if (inReplyTo) {
+          data = JSON.stringify({
+            status: content,
+            in_reply_to_id: inReplyTo,
+            media_ids: attachments,
+          });
+        } else {
+          data = JSON.stringify({ status: content, media_ids: attachments });
+        }
+        console.log(data);
+        grab(
+          "/api/v1/statuses",
+          "POST",
+          true,
+          function (xhr) {
+            if (xhr.status == 200) {
+              if (window !== window.top) {
+                window.location.href = "/compose.html";
+                window.parent.postMessage(
+                  { type: "timeline-update-request" },
+                  "*",
+                );
+              } else {
+                navigation.back();
+              }
+            } else {
+              alert("Failed to post: " + xhr.responseText);
+            }
+          },
+          data,
+          "application/json",
+        );
+      }
+
+      function openEmoji() {
+        var frame = document.createElement("iframe");
+        frame.src = "/emoji.html";
+        frame.style.width = "100%";
+        frame.style.height = "10em";
+        document.getElementById("sacrifice").replaceWith(frame);
+      }
+
+      function uploadFile() {
+        const files = form.media.files;
+        console.log(files);
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          console.log(file);
+          const type = file["type"].split("/")[0];
+          const formData = new FormData();
+          formData.append("file", file);
+          // if (type == "image" || type == "video") {
+          //   const alt = prompt("(Optional) Enter alt text for file " + (i + 1));
+          //   if (alt) formData.append("description", alt);
+          // }
+          if (alts[i]) {
+            formData.append("description", alts[i]);
+          }
+
+          grab(
+            "/api/v2/media",
+            "POST",
+            false,
+            function (xhr) {
+              if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                  const response = JSON.parse(xhr.responseText);
+                  console.log(response);
+                  attachments.push(response.id);
+                  document.getElementById("attachmentCount").innerHTML =
+                    attachments.length +
+                    " attachment" +
+                    (attachments.length == 1 ? "" : "s");
+                } else if (xhr.status == 202) {
+                  console.debug("Media upload in progress");
+                } else {
+                  alert("Failed to upload media: " + xhr.responseText);
+                }
+              }
+            },
+            formData,
+            null,
+          );
+        }
+      }
+    </script>
+    <style>
+      #emoji-button {
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
+        float: right;
+        background: none;
+        border: none;
+      }
+      #text {
+        position: relative;
+      }
+      #content {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <form id="composeForm" onsubmit="post(); return false;">
+      <label for="content">
+        <h2 id="title">Compose a new post</h2>
+        <span id="replied_content"></span>
+      </label>
+      <br />
+      <div id="text">
+        <textarea
+          name="content"
+          id="content"
+          cols="30"
+          rows="10"
+          placeholder="If love is the answer, you're home"
+          style="width: 98%; height: 250px"
+          required
+        ></textarea>
+        <button id="emoji-button" onclick="openEmoji(); return false;">
+          <span class="btn-inner">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              viewBox="0 0 17.4727 14.9494"
+            >
+              <g>
+                <rect
+                  height="14.9494"
+                  opacity="0"
+                  width="17.4727"
+                  x="0"
+                  y="0"
+                />
+                <path
+                  d="M14.2563 7.43914L14.2352 7.85627C14.131 7.84485 14.025 7.84 13.918 7.84C13.6665 7.84 13.4209 7.86658 13.1842 7.91797C13.2019 7.76087 13.2104 7.60102 13.2104 7.43914C13.2104 4.96453 11.2075 2.9616 8.73289 2.9616C6.25829 2.9616 4.26219 4.96453 4.26219 7.43914C4.26219 9.91375 6.25829 11.9167 8.73289 11.9167C9.313 11.9167 9.86719 11.8066 10.3739 11.6026C10.3906 11.9627 10.4655 12.3078 10.5902 12.6292C10.0117 12.8427 9.38547 12.9557 8.73289 12.9557C5.6909 12.9557 3.2163 10.488 3.2163 7.43914C3.2163 4.39032 5.6909 1.92254 8.73289 1.92254C11.7817 1.92254 14.2563 4.39032 14.2563 7.43914Z"
+                />
+                <path
+                  d="M10.6333 9.0319C10.6333 9.40106 9.86766 10.153 8.72606 10.153C7.59129 10.153 6.82567 9.40106 6.82567 9.0319C6.82567 8.89519 6.9624 8.82683 7.09911 8.88152C7.50243 9.07292 7.94676 9.31218 8.72606 9.31218C9.51219 9.31218 9.95653 9.07292 10.3598 8.88152C10.4966 8.82683 10.6333 8.89519 10.6333 9.0319ZM7.81689 6.22234C7.81689 6.66667 7.50243 6.9743 7.14696 6.9743C6.79833 6.9743 6.49071 6.66667 6.49071 6.22234C6.49071 5.76433 6.79833 5.45671 7.14696 5.45671C7.50243 5.45671 7.81689 5.76433 7.81689 6.22234ZM10.9751 6.22234C10.9751 6.66667 10.6675 6.9743 10.312 6.9743C9.95653 6.9743 9.65574 6.66667 9.65574 6.22234C9.65574 5.76433 9.95653 5.45671 10.312 5.45671C10.6675 5.45671 10.9751 5.76433 10.9751 6.22234Z"
+                />
+                <path
+                  d="M16.6729 11.3947C16.6729 12.8986 15.4083 14.1496 13.918 14.1496C12.4073 14.1496 11.1563 12.9123 11.1563 11.3947C11.1563 9.88394 12.4073 8.63981 13.918 8.63981C15.4287 8.63981 16.6729 9.88394 16.6729 11.3947ZM13.5626 10.0343L13.5626 11.0392L12.5577 11.0392C12.3458 11.0392 12.2022 11.1828 12.2022 11.3947C12.2022 11.6066 12.3458 11.7502 12.5577 11.7502L13.5626 11.7502L13.5626 12.755C13.5626 12.967 13.6993 13.1105 13.918 13.1105C14.1299 13.1105 14.2735 12.967 14.2735 12.755L14.2735 11.7502L15.2784 11.7502C15.4903 11.7502 15.627 11.6066 15.627 11.3947C15.627 11.1828 15.4903 11.0392 15.2784 11.0392L14.2735 11.0392L14.2735 10.0343C14.2735 9.82241 14.1299 9.67886 13.918 9.67886C13.6993 9.67886 13.5626 9.82241 13.5626 10.0343Z"
+                />
+              </g>
+            </svg>
+          </span>
+        </button>
+      </div>
+      <br /><br />
+
+      <!-- a sacrifice to the DOM gods -->
+      <div id="sacrifice"></div>
+
+      <input
+        type="file"
+        name="media"
+        multiple
+        onchange="alts.push(prompt('Enter alt text for file ' + alts.length + 1)); return false;"
+      />
+      <span id="attachmentCount">0 attachments</span>
+      <br /><br />
+      <span>
+        <button onclick="navigation.back(); return false;">Cancel</button>
+        <button type="submit">Post</button>
+      </span>
+    </form>
+  </body>
+  <script>
+    var form = document.getElementById("composeForm");
+    if (inReplyTo) {
+      document.title = "Mammut - Reply";
+      document.getElementById("title").innerHTML = "Compose a reply";
+    }
+    const contents = getSearchParam("status_content");
+    console.log(contents);
+
+    if (contents)
+      document.getElementById("replied_content").innerHTML = contents;
+
+    const replyUser = getSearchParam("reply_to");
+    if (replyUser)
+      form.content.value = "@" + replyUser + " " + form.content.value;
+
+    document.body.addEventListener("keydown", function (e) {
+      if (!(e.keyCode == 13 && (e.metaKey || e.ctrlKey))) return;
+      post();
+    });
+  </script>
+</html>
