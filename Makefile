@@ -5,11 +5,11 @@ dist:
 	npm install -g csso-cli
 	npm install -g html-minifier
 	# Minify every js file
-	find . -name "*.js" -exec terser --compress --mangle --output {} {} \;
+	find ./dist/ -name "*.js" -exec terser --compress --mangle --output {} {} \;
 	# Minify every css file
-	find . -name "*.css" -exec csso {} -o {} \;
+	find ./dist/ -name "*.css" -exec csso {} -o {} \;
 	# Minify every html file
-	find . -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --output {} {} \;
+	find ./dist/ -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --output {} {} \;
 
 clean:
 	rm -rf dist
