@@ -1,4 +1,4 @@
-# Mammut[^1mamət]
+# Mammut
 
 A minimalistic, lightweight, highly-compatible, and no-frills Mastodon client written in vanilla JS.
 
