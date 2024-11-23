@@ -217,14 +217,16 @@
   <script>
     var form = document.getElementById("composeForm");
     if (inReplyTo) {
+      document.getElementById("replied_content").innerHTML =
+        "Replying to post:";
       document.title = "Mammut - Reply";
       document.getElementById("title").innerHTML = "Compose a reply";
     }
     const contents = getSearchParam("status_content");
-    console.log(contents);
+    console.warn(contents);
 
     if (contents)
-      document.getElementById("replied_content").innerHTML = contents;
+      document.getElementById("replied_content").innerHTML += contents;
 
     const replyUser = getSearchParam("reply_to");
     if (replyUser)
