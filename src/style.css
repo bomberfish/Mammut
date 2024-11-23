@@ -159,6 +159,13 @@ object.attachment {
     height: auto;
 } */
 
+#viewOptions {
+    margin-top: 1em;
+}
+
+#viewOptions>label {
+    margin-right: 0.5em;
+}
 
 #newBtn,
 #olderBtn {

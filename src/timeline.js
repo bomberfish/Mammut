@@ -75,7 +75,7 @@ function getTimeline(timelineType) {
   );
 }
 
-function appendStatus(original_post, currentViewType, indentAmount) {
+function appendStatus(original_post, currentViewType, indentAmount, pinned) {
   var status = original_post,
     statusDiv = document.createElement("div");
 
@@ -84,6 +84,14 @@ function appendStatus(original_post, currentViewType, indentAmount) {
   }
 
   statusDiv.className = "status id-" + status.id + " " + currentViewType;
+
+  if (pinned) {
+    statusDiv.classList.add("pinned");
+    var pinLabel = document.createElement("div");
+    pinLabel.className = "postlabel";
+    pinLabel.appendChild(document.createTextNode("Pinned"));
+    statusDiv.appendChild(pinLabel);
+  }
 
   if (original_post.reblog) {
     status = original_post.reblog;
@@ -906,6 +914,54 @@ function getUserPage() {
         var timeline = document.createElement("div");
         timeline.id = "timeline";
 
+        var viewOptions = document.createElement("div");
+        viewOptions.id = "viewOptions";
+
+        var onlyMedia = document.createElement("input");
+        onlyMedia.type = "checkbox";
+        onlyMedia.id = "onlyMedia";
+        onlyMedia.name = "onlyMedia";
+        onlyMedia.onchange = function () {
+          fetchPosts();
+        };
+        viewOptions.appendChild(onlyMedia);
+
+        var onlyMediaLabel = document.createElement("label");
+        onlyMediaLabel.htmlFor = "onlyMedia";
+        onlyMediaLabel.innerHTML = "Only show media";
+        viewOptions.appendChild(onlyMediaLabel);
+
+        var replies = document.createElement("input");
+        replies.type = "checkbox";
+        replies.id = "replies";
+        replies.name = "replies";
+        replies.onchange = function () {
+          fetchPosts();
+        };
+        viewOptions.appendChild(replies);
+
+        var repliesLabel = document.createElement("label");
+        repliesLabel.htmlFor = "replies";
+        repliesLabel.innerHTML = "Include replies";
+        viewOptions.appendChild(repliesLabel);
+
+        var reblogs = document.createElement("input");
+        reblogs.type = "checkbox";
+        reblogs.id = "reblogs";
+        reblogs.name = "reblogs";
+        reblogs.checked = true;
+        reblogs.onchange = function () {
+          fetchPosts();
+        };
+        viewOptions.appendChild(reblogs);
+
+        var reblogsLabel = document.createElement("label");
+        reblogsLabel.htmlFor = "reblogs";
+        reblogsLabel.innerHTML = "Include reblogs";
+        viewOptions.appendChild(reblogsLabel);
+
+        document.body.appendChild(viewOptions);
+
         if (after != null) {
           var newestButton = document.createElement("a");
           newestButton.id = "newestBtn";
@@ -914,16 +970,51 @@ function getUserPage() {
           fixupLinkInFrames(newestButton);
           timeline.appendChild(newestButton);
         }
+        function fetchPosts() {
+          document.body.appendChild(timeline);
+          timeline.innerHTML = "";
 
-        grab(
-          "/api/v1/accounts/" +
-            userId +
-            "/statuses" +
-            "?limit=40" +
-            (after != null ? "&max_id=" + after : ""),
-          "GET",
-          true,
-          function (postsXhr) {
+          grab(
+            "/api/v1/accounts/" +
+              userId +
+              "/statuses" +
+              "?limit=40" +
+              "&pinned=true",
+            "GET",
+            false,
+            function (postsXhr) {
+              if (postsXhr.status == 200) {
+                var posts = JSON.parse(postsXhr.responseText);
+                console.log(posts);
+                for (var i = 0; i < posts.length; i++) {
+                  timeline.appendChild(
+                    appendStatus(posts[i], "user", undefined, true),
+                  );
+                }
+                timeline.appendChild(document.createElement("hr"));
+              }
+            },
+          );
+
+          var endpoint =
+            "/api/v1/accounts/" + userId + "/statuses" + "?limit=40";
+
+          onlyMedia = document.getElementById("onlyMedia");
+          replies = document.getElementById("replies");
+          reblogs = document.getElementById("reblogs");
+          console.log(onlyMedia.checked, replies.checked, reblogs.checked);
+
+          if (after != null) endpoint += "&max_id=" + after;
+
+          if (onlyMedia.checked) endpoint += "&only_media=true";
+
+          if (!replies.checked) endpoint += "&exclude_replies=true";
+
+          if (!reblogs.checked) endpoint += "&exclude_reblogs=true";
+
+          console.log(endpoint);
+
+          grab(endpoint, "GET", true, function (postsXhr) {
             if (postsXhr.status == 200) {
               var posts = JSON.parse(postsXhr.responseText);
               console.log(posts);
@@ -944,7 +1035,6 @@ function getUserPage() {
                   olderButton.id = "olderBtn";
                 }
               }
-              document.body.appendChild(timeline);
             } else {
               window.location.href =
                 "/error.html?error=" +
@@ -962,8 +1052,10 @@ function getUserPage() {
                   2000,
                 );
             }
-          },
-        );
+          });
+        }
+
+        fetchPosts();
       } else {
         window.location.href =
           "/error.html?error=" +
