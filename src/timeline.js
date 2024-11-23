@@ -24,6 +24,7 @@ function getTimeline(timelineType) {
         console.log(response);
         var timelineDiv = document.createElement("div");
         timelineDiv.id = "timeline";
+        if (window.self !== window.top) timelineDiv.style.paddingTop = "0.25em";
         timelineDiv.innerHTML = "";
         if (response.length == 0) {
           timelineDiv.innerHTML = "No posts.";
