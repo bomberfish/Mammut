@@ -129,6 +129,12 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
       }
     });
   }
+
+  statusDiv.onclick = function (e) {
+    if (statusDiv != e.target && contentDiv != e.target) return;
+    window.location.href = "/status.html?id=" + status.id;
+  };
+
   if (status.sensitive && currentViewType != "expanded") {
     var userLink = document.createElement("a");
     fixupLinkInFrames(userLink);
@@ -166,11 +172,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     var contentDiv = document.createElement("div");
     contentDiv.className = "content";
     contentDiv.innerHTML = status.content;
-
-    statusDiv.onclick = function (e) {
-      if (statusDiv != e.target && contentDiv != e.target) return;
-      window.location.href = "/status.html?id=" + status.id;
-    };
 
     const links = contentDiv.querySelectorAll("a");
 
