@@ -109,10 +109,10 @@
                   const response = JSON.parse(xhr.responseText);
                   console.log(response);
                   attachments.push(response.id);
-                  document.getElementById("attachmentCount").innerHTML =
-                    attachments.length +
-                    " attachment" +
-                    (attachments.length == 1 ? "" : "s");
+                  // document.getElementById("attachmentCount").innerHTML =
+                  //   attachments.length +
+                  //   " attachment" +
+                  //   (attachments.length == 1 ? "" : "s");
                 } else if (xhr.status == 202) {
                   console.debug("Media upload in progress");
                 } else {
@@ -204,7 +204,7 @@
         multiple
         onchange="alts.push(prompt('Enter alt text for file ' + alts.length + 1)); return false;"
       />
-      <span id="attachmentCount">0 attachments</span>
+      <!-- <span id="attachmentCount">0 attachments</span> -->
       <br /><br />
       <span>
         <button onclick="navigation.back(); return false;">Cancel</button>

@@ -145,7 +145,8 @@ a.subdued {
     border: 1px solid #454547;
     background-color: #dfdfe2;
     min-width: 7em;
-    max-width: 25em;
+    width: 20em;
+    max-width: 80%;
     height: auto;
     resize: both;
     overflow: auto;
@@ -455,6 +456,19 @@ frame#rightmost {
 
 .status div {
     width: fit-content;
+}
+
+.content {
+    width: 100%!important;
+}
+
+.content>p {
+    width: fit-content;
+}
+
+.content>p,
+.content>p>* {
+    max-width: 100%;
 }
 
 iframe[src^="/emoji.html"] {

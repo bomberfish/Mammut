@@ -164,6 +164,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     statusDiv.appendChild(userLink);
     statusDiv.appendChild(document.createElement("br"));
     var contentDiv = document.createElement("div");
+    contentDiv.className = "content";
     contentDiv.innerHTML = status.content;
 
     statusDiv.onclick = function (e) {
