@@ -59,11 +59,11 @@
           true,
           function (xhr) {
             if (xhr.status == 200) {
-              if (window !== window.top) {
+              if (window.self !== window.top) {
                 window.location.href = "/compose.html";
                 window.parent.postMessage( { type: "timeline-update-request" },  "*");
               } else {
-                navigation.back();
+                history.back();
               }
             } else {
               alert("Failed to post: " + xhr.responseText);
@@ -159,7 +159,7 @@
           id="content"
           cols="30"
           rows="10"
-          placeholder="If love is the answer, you're home"
+          placeholder="What's happening?"
           style="width: 98%; height: 250px"
           required
         ></textarea>
