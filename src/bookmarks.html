@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Notifications</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <script type="text/javascript" src="/timeline.js"></script>
+    <script>
+      // var token = localStorage.getItem("access_token");
+      // var domain = localStorage.getItem("instanceDomain");
+
+      grab("/api/v1/bookmarks", "GET", true, function (xhr) {
+        if (xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          console.log(response);
+          for (var i = 0; i < response.length; i++) {
+            document.body.appendChild(appendStatus(response[i], "bookmarks"));
+          }
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+      <h1>Bookmarks</h1>
+  </body>
+</html>
