@@ -482,6 +482,30 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
   };
   postActions.appendChild(repostButton);
 
+  var bookmarkButton = document.createElement("button");
+  bookmarkButton.className = "postAction bookmarkButton";
+  if (status.bookmarked) {
+    bookmarkButton.classList.add("active");
+  }
+  bookmarkButton.innerHTML =
+    '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 7.84082 11.6553"><g><rect height="11.6553" opacity="0" width="7.84082" x="0" y="0"/><path d="M0.62207 11.6348C0.90918 11.6348 1.08008 11.4639 1.64062 10.9238L3.62988 8.99609C3.65723 8.96875 3.71191 8.96875 3.73242 8.99609L5.72168 10.9238C6.28906 11.4639 6.45312 11.6348 6.74707 11.6348C7.13672 11.6348 7.3623 11.375 7.3623 10.917L7.3623 1.59277C7.3623 0.533203 6.83594 0 5.79004 0L1.57227 0C0.526367 0 0 0.533203 0 1.59277L0 10.917C0 11.375 0.225586 11.6348 0.62207 11.6348ZM1.12109 9.95996C1.0459 10.0283 0.963867 10.0078 0.963867 9.90527L0.963867 1.60645C0.963867 1.18262 1.18945 0.963867 1.62012 0.963867L5.74219 0.963867C6.17285 0.963867 6.39844 1.18262 6.39844 1.60645L6.39844 9.90527C6.39844 10.0078 6.31641 10.0283 6.24805 9.95996L3.99219 7.82031C3.80078 7.63574 3.56152 7.63574 3.37012 7.82031Z"/></g></svg>' +
+    "</span>";
+  bookmarkButton.onclick = function () {
+    const endpoint =
+      "/api/v1/statuses/" +
+      status.id +
+      (repostButton.classList.contains("active") ? "/unbookmark" : "/bookmark");
+    console.log(domain + endpoint);
+    grab(endpoint, "POST", true, function (xhr) {
+      if (xhr.status === 200) {
+        bookmarkButton.classList.toggle("active");
+      } else {
+        alert("Error: " + xhr.responseText);
+      }
+    });
+  };
+  postActions.appendChild(bookmarkButton);
+
   reactButton = document.createElement("button");
   reactButton.className = "postAction reactButton";
   reactButton.innerHTML =

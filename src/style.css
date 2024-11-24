@@ -268,6 +268,10 @@ button .btn-inner-text {
     fill: #ff9944 !important;
 }
 
+.bookmarkButton.active svg {
+    fill: #007bff !important;
+}
+
 .reaction>*,
 .postAction>* {
     vertical-align: middle;
@@ -506,6 +510,9 @@ iframe[src^="/emoji.html"] {
         fill: yellow !important;
     }
 
+    .bookmarkButton.active svg {
+        fill: #3898ff !important;
+    }
 
     body {
         background-color: #121216;
