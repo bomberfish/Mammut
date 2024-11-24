@@ -40,6 +40,6 @@
     myProfileLink.href = "/user.html?id=" + myId;
     myProfileLink.target = "content";
     myProfileLink.textContent = "My Profile";
-    document.getElementById("sacrifice").replaceWith(myProfileLink);
+    document.getElementById("sacrifice").outerHTML = myProfileLink.outerHTML;
   </script>
 </html>

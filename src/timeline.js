@@ -1,4 +1,4 @@
-let domain = localStorage.getItem("instanceDomain");
+const domain = localStorage.getItem("instanceDomain");
 const token = localStorage.getItem("access_token");
 
 if (domain == null || token == null) {
@@ -8,7 +8,7 @@ var myId = localStorage.getItem("myId");
 
 function getTimeline(timelineType) {
   appendTimelineNavBar(timelineType);
-  let afterParam = getSearchParam("after");
+  const afterParam = getSearchParam("after");
   addComposeBtn();
 
   grab(
@@ -40,7 +40,7 @@ function getTimeline(timelineType) {
         for (var i = 0; i < response.length; i++) {
           var post = response[i];
           timelineDiv.appendChild(
-            appendStatus(post, "timeline-" + timelineType),
+            appendStatus(post, "timeline-" + timelineType)
           );
           if (i == response.length - 1) {
             var lastPostId = post.id,
@@ -66,12 +66,12 @@ function getTimeline(timelineType) {
                 " and readyState " +
                 xhr.readyState +
                 "\n" +
-                xhr.responseText,
+                xhr.responseText
             ),
-            2000,
+            2000
           );
       }
-    },
+    }
   );
 }
 
@@ -149,7 +149,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     spoilerDiv.appendChild(spoilerLabel);
 
     var text = document.createTextNode(
-      " " + status.spoiler_text + " (Click this post to reveal full details)",
+      " " + status.spoiler_text + " (Click this post to reveal full details)"
     );
 
     spoilerDiv.appendChild(text);
@@ -191,6 +191,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
     if (status.poll) {
       function appendPoll(poll, status) {
+        console.log(poll);
         var pollDiv = document.createElement("form");
         pollDiv.className = "poll";
         console.log(poll);
@@ -199,8 +200,9 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
         pollLabel.innerText = "Poll:";
         pollDiv.appendChild(pollLabel);
 
-        for (var i = 0; i < poll.options.length; i++) {
-          const option = poll.options[i];
+        for (var k = 0; i < poll.options.length; k++) {
+          const option = poll.options[k];
+          if (!option) continue;
           console.log(option);
           var optionDiv = document.createElement("div");
           optionDiv.className = "pollOption";
@@ -233,9 +235,9 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
           if (poll.voted || poll.expired) {
             optionDiv.style.cursor = "not-allowed";
-            let allChildren = optionDiv.children;
-            for (let i = 0; i < allChildren.length; i++) {
-              allChildren[i].style.cursor = "not-allowed";
+            var allChildren = optionDiv.children;
+            for (var j = 0; j < allChildren.length; j++) {
+              allChildren[j].style.cursor = "not-allowed";
             }
           } else {
             if (!poll.multiple) {
@@ -261,10 +263,10 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
                               var newPollDiv = appendPoll(status.poll, status);
                               pollDiv.parentNode.replaceChild(
                                 newPollDiv,
-                                pollDiv,
+                                pollDiv
                               );
                             }
-                          },
+                          }
                         );
                       } else {
                         console.error("Failed to vote for " + option.title);
@@ -272,7 +274,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
                       }
                     },
                     JSON.stringify({ choices: [choiceIndex] }),
-                    "application/json",
+                    "application/json"
                   );
                 };
               })(i);
@@ -313,7 +315,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
                         var newPollDiv = appendPoll(status.poll, status);
                         pollDiv.parentNode.replaceChild(newPollDiv, pollDiv);
                       }
-                    },
+                    }
                   );
                 } else {
                   console.error("Failed to vote for " + choices);
@@ -321,7 +323,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
                 }
               },
               JSON.stringify({ choices: choices }),
-              "application/json",
+              "application/json"
             );
           };
           pollDiv.appendChild(submitButton);
@@ -337,12 +339,12 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
         return pollDiv;
       }
-      var pollElement = appendPoll(status.poll, status);
-      statusDiv.appendChild(pollElement);
+      // var pollElement = appendPoll(status.poll, status);
+      // statusDiv.appendChild(pollElement);
     }
 
     for (var i = 0; i < status.media_attachments.length; i++) {
-      let attachment = status.media_attachments[i];
+      var attachment = status.media_attachments[i];
       switch (attachment.type) {
         case "image":
           var img = document.createElement("img");
@@ -356,7 +358,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
           img.setAttribute("data-src", attachment.url);
           img.setAttribute(
             "onclick",
-            'window.open("' + attachment.url + '", "_blank")',
+            'window.open("' + attachment.url + '", "_blank")'
           );
           statusDiv.appendChild(img);
           break;
@@ -370,7 +372,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
             true,
             undefined,
             true,
-            attachment.description,
+            attachment.description
           );
         case "audio":
           var audio = document.createElement("audio");
@@ -546,7 +548,7 @@ function addReactions(reactions, status) {
         window.location.reload(); // workaround for this stuff just not working
       }
 
-      reactionDiv.replaceWith(addReactions(reactions, status));
+      reactionDiv.outerHTML = addReactions(reactions, status).outerHTML;
     };
 
     if (reaction.me) {
@@ -657,11 +659,11 @@ function getPost() {
       false,
       function (xhr) {
         if (xhr.status == 200) {
-          let response = JSON.parse(xhr.responseText);
+          var response = JSON.parse(xhr.responseText);
           console.log(
             response,
             response.ancestors.length,
-            response.descendants.length,
+            response.descendants.length
           );
 
           function appendStatuses(statuses) {
@@ -673,10 +675,10 @@ function getPost() {
 
               if (status.in_reply_to_id) {
                 indent = 25;
-                let parentId = status.in_reply_to_id;
+                var parentId = status.in_reply_to_id;
                 while (parentId) {
                   indent = min(indent + 25, window.innerWidth / 3);
-                  let foundParent = false;
+                  var foundParent = false;
                   for (var j = 0; j < i; j++) {
                     if (statuses[j].id == parentId) {
                       parentId = statuses[j].in_reply_to_id;
@@ -691,7 +693,7 @@ function getPost() {
               }
               console.log(indent);
               document.body.appendChild(
-                appendStatus(status, "expanded", indent),
+                appendStatus(status, "expanded", indent)
               );
             }
           }
@@ -720,12 +722,12 @@ function getPost() {
                   "/context returned code " +
                   xhr.status +
                   "\n" +
-                  xhr.responseText,
+                  xhr.responseText
               ),
-              2000,
+              2000
             );
         }
-      },
+      }
     );
   } else {
     document.write("No post ID specified");
@@ -780,10 +782,7 @@ function getUserPage() {
         window.onresize = adjustHeaderSize;
         var overlay = document.createElement("div");
         overlay.id = "headerOverlay";
-        if (user.header) {
-          overlay.style.backgroundImage =
-            "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.75))";
-        }
+
         overlay.style.width = "100%";
         overlay.style.height = "100%";
         overlay.style.color = "white";
@@ -988,12 +987,12 @@ function getUserPage() {
                 console.log(posts);
                 for (var i = 0; i < posts.length; i++) {
                   timeline.appendChild(
-                    appendStatus(posts[i], "user", undefined, true),
+                    appendStatus(posts[i], "user", undefined, true)
                   );
                 }
                 timeline.appendChild(document.createElement("hr"));
               }
-            },
+            }
           );
 
           var endpoint =
@@ -1047,9 +1046,9 @@ function getUserPage() {
                       " and readyState " +
                       postsXhr.readyState +
                       "\n" +
-                      postsXhr.responseText,
+                      postsXhr.responseText
                   ),
-                  2000,
+                  2000
                 );
             }
           });
@@ -1068,9 +1067,9 @@ function getUserPage() {
                 " and readyState " +
                 xhr.readyState +
                 "\n" +
-                xhr.responseText,
+                xhr.responseText
             ),
-            2000,
+            2000
           );
       }
     });
@@ -1095,7 +1094,7 @@ function isFollowingUser(userId, callback) {
           callback(false);
         }
       }
-    },
+    }
   );
 }
 
@@ -1110,7 +1109,7 @@ function changeFollowStatus(currentlyFollowing, id, callback) {
       } else {
         callback(false);
       }
-    },
+    }
   );
 }
 
@@ -1130,14 +1129,14 @@ function react(postId, emojiId, removeReaction) {
       } else {
         alert("Error adding reaction: " + xhr.responseText);
       }
-    },
+    }
   );
   return response;
 }
 
 function addComposeBtn() {
   if (window.self !== window.top) return; // don't add the compose button in deck mode
-  let newPostButton = document.createElement("a");
+  var newPostButton = document.createElement("a");
   fixupLinkInFrames(newPostButton);
   newPostButton.id = "newBtn";
   newPostButton.href = "/compose.html";
@@ -1162,7 +1161,7 @@ window.addEventListener("message", function (e) {
       if (id == e.data.postId) {
         const reacts = frames[i].parentNode.querySelector(".reactions");
         if (reacts && reacts.reactions && reacts.reactions.length > 0) {
-          reacts.replaceWith(addReactions(response.reactions, response));
+          reacts.outerHTML = addReactions(response.reactions, response).outerHTML;
         }
         frames[i].remove();
         break;

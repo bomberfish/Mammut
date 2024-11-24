@@ -21,7 +21,8 @@
     <p id="error"></p>
   </body>
   <script>
-    const error = getSearchParam("error");
-    document.getElementById("error").innerHTML = error;
+    const errorMsg = getSearchParam("error");
+    console.log(errorMsg);
+    document.getElementById("error").innerHTML += errorMsg;
   </script>
 </html>

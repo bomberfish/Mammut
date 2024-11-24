@@ -36,14 +36,7 @@
             img.id = emojis[i].shortcode;
             img.lazy = "true";
             img.onclick = function () {
-              window.parent.postMessage(
-                {
-                  type: "emoji-insert",
-                  data: this.title,
-                  postId: getSearchParam("post_id"),
-                },
-                "*",
-              );
+              window.parent.postMessage( { type: "emoji-insert", data: this.title, postId: getSearchParam("post_id") }, "*");
             };
             emojiGrid.appendChild(img);
           }

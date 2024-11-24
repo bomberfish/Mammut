@@ -1,19 +1,20 @@
 // var domain = localStorage.getItem("instanceDomain");
-let redirectUri = window.location.origin + "/auth_redirect.html";
+const redirectUri = window.location.origin + "/auth_redirect.html";
 
 function auth() {
   console.log("authenticate");
-  window.location.href =
-    localStorage.getItem("instanceDomain") +
-    "/oauth/authorize?response_type=code&client_id=" +
-    encodeURIComponent(localStorage.getItem("client_id")) +
-    "&redirect_uri=" +
-    encodeURIComponent(redirectUri) +
-    "&scope=" +
-    encodeURIComponent(
-      "read write follow profile push admin:read admin:write",
-    ) +
-    "&force_login=true";
+  const instanceDomain = localStorage.getItem("instanceDomain");
+  const clientId = encodeURIComponent(localStorage.getItem("client_id"));
+  const scope = encodeURIComponent(
+    "read write follow profile push admin:read admin:write"
+  );
+
+  var authUrl = instanceDomain + "/oauth/authorize?response_type=code";
+  authUrl += "&client_id=" + clientId;
+  authUrl += "&redirect_uri=" + encodeURIComponent(redirectUri);
+  authUrl += "&scope=" + scope;
+  authUrl += "&force_login=true";
+  window.location.href = authUrl;
 }
 
 function getToken() {
@@ -23,7 +24,7 @@ function getToken() {
     code: localStorage.getItem("auth_code"),
     client_id: localStorage.getItem("client_id"),
     client_secret: localStorage.getItem("client_secret"),
-    redirect_uri: redirectUri,
+    redirect_uri: redirectUri
   });
   var callback = function (xhr) {
     if (xhr.status == 200) {
@@ -36,6 +37,7 @@ function getToken() {
         window.location.href = "/deck.html";
       }
     } else {
+      // console.error(xhr.responseText);
       window.location.href =
         "/error.html?error=" +
         truncate(
@@ -45,9 +47,9 @@ function getToken() {
               " and readyState " +
               xhr.readyState +
               "\n" +
-              xhr.responseText,
+              xhr.responseText
           ),
-          2000,
+          2000
         );
     }
   };
@@ -57,7 +59,7 @@ function getToken() {
     true,
     callback,
     requestBody,
-    "application/json; charset=utf-8",
+    "application/json; charset=utf-8"
   );
 }
 
@@ -85,9 +87,8 @@ function logOut() {
               " and readyState " +
               xhr.readyState +
               "\n" +
-              xhr.responseText,
-          ),
-          2000,
+              xhr.responseText
+          ), 2000
         );
     }
   };
@@ -97,7 +98,7 @@ function logOut() {
     async,
     callback,
     requestBody,
-    "application/json; charset=utf-8",
+    "application/json; charset=utf-8"
   );
 }
 
@@ -106,23 +107,26 @@ function createApp() {
   if (localStorage.getItem("instanceDomain") == null) {
     localStorage.setItem(
       "instanceDomain",
-      document.getElementById("domain").value,
+      document.getElementById("domain").value
     );
   }
-  console.log(localStorage.getItem("domain"));
+  console.log(localStorage.getItem("instanceDomain"));
   var requestBody = JSON.stringify({
     client_name: "Mammut",
     redirect_uris: redirectUri,
     scopes: "read write follow profile push admin:read admin:write",
-    website: window.location.origin,
+    website: window.location.origin
   });
+  console.log(requestBody);
   var callback = function (xhr) {
     if (xhr.status == 200) {
+      console.log(xhr.responseText);
       var response = JSON.parse(xhr.responseText);
       localStorage.setItem("client_id", response.client_id);
       localStorage.setItem("client_secret", response.client_secret);
       window.location.href = "auth.html";
     } else if (xhr.status != 200) {
+      console.error(xhr.code, xhr.status, xhr.responseText);
       // window.location.href =
       //   "/error.html?error=" +
       //   truncate(
@@ -141,10 +145,10 @@ function createApp() {
   grab(
     "/api/v1/apps",
     "POST",
-    true,
+    false,
     callback,
     requestBody,
-    "application/json; charset=utf-8",
+    "application/json; charset=utf-8"
   );
 }
 

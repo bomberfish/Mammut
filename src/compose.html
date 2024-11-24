@@ -22,7 +22,12 @@
     </script>
     <script type="text/javascript" src="/util.js"></script>
     <script>
+      var alts = [];
+      var attachments = [];
+      console.log("COMPOSE", alts,attachments);
+
       const inReplyTo = getSearchParam("reply_id");
+
       var token = localStorage.getItem("access_token");
       var domain = localStorage.getItem("instanceDomain");
 
@@ -33,10 +38,6 @@
         }
       });
 
-      var attachments = [];
-
-      var alts = [];
-
       function post() {
         var content = form.content.value;
 
@@ -46,7 +47,7 @@
           data = JSON.stringify({
             status: content,
             in_reply_to_id: inReplyTo,
-            media_ids: attachments,
+            media_ids: attachments
           });
         } else {
           data = JSON.stringify({ status: content, media_ids: attachments });
@@ -60,10 +61,7 @@
             if (xhr.status == 200) {
               if (window !== window.top) {
                 window.location.href = "/compose.html";
-                window.parent.postMessage(
-                  { type: "timeline-update-request" },
-                  "*",
-                );
+                window.parent.postMessage( { type: "timeline-update-request" },  "*");
               } else {
                 navigation.back();
               }
@@ -72,7 +70,7 @@
             }
           },
           data,
-          "application/json",
+          "application/json"
         );
       }
 
@@ -81,13 +79,13 @@
         frame.src = "/emoji.html";
         frame.style.width = "100%";
         frame.style.height = "10em";
-        document.getElementById("sacrifice").replaceWith(frame);
+        document.getElementById("sacrifice").outerHTML = frame.outerHTML;
       }
 
       function uploadFile() {
         const files = form.media.files;
         console.log(files);
-        for (let i = 0; i < files.length; i++) {
+        for (var i = 0; i < files.length; i++) {
           const file = files[i];
           console.log(file);
           const type = file["type"].split("/")[0];
@@ -123,7 +121,7 @@
               }
             },
             formData,
-            null,
+            null
           );
         }
       }
