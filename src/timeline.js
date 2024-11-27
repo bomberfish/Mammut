@@ -31,7 +31,6 @@ function getTimeline(timelineType) {
         }
         if (afterParam != null) {
           var newestButton = document.createElement("a");
-          fixupLinkInFrames(newestButton);
           newestButton.id = "newestBtn";
           newestButton.href = window.location.pathname;
           newestButton.innerHTML = "Jump to the latest ";
@@ -45,7 +44,6 @@ function getTimeline(timelineType) {
           if (i == response.length - 1) {
             var lastPostId = post.id,
               olderButton = document.createElement("a");
-            fixupLinkInFrames(olderButton);
             olderButton.href =
               window.location.pathname + "?after=" + lastPostId;
             olderButton.innerHTML = "View older posts";
@@ -99,9 +97,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     reblogLabel.className = "postlabel";
     reblogLabel.appendChild(document.createTextNode("Reblogged by "));
     var rebloggerLink = document.createElement("a");
-    fixupLinkInFrames(rebloggerLink);
     rebloggerLink.href = "/user.html?id=" + original_post.account.id;
-    fixupLinkInFrames(rebloggerLink);
     rebloggerLink.innerHTML = original_post.account.display_name;
     reblogLabel.appendChild(rebloggerLink);
     statusDiv.appendChild(reblogLabel);
@@ -115,10 +111,8 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     replyLabel.className = "postlabel";
     replyLabel.appendChild(document.createTextNode("Replied to "));
     var replyLink = document.createElement("a");
-    fixupLinkInFrames(replyLink);
     replyLink.href = "/user.html?id=" + replyToAccountId;
     replyLink.innerHTML = "a user";
-    fixupLinkInFrames(replyLink);
     replyLabel.appendChild(replyLink);
     statusDiv.appendChild(replyLabel);
     grab("/api/v1/accounts/" + replyToAccountId, "GET", true, function (xhr) {
@@ -137,7 +131,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
   if (status.sensitive && currentViewType != "expanded") {
     var userLink = document.createElement("a");
-    fixupLinkInFrames(userLink);
     userLink.href = "/user.html?id=" + status.account.id;
     userLink.innerHTML = status.account.display_name;
     interpolateEmoji(userLink, status.account.emojis);
@@ -163,7 +156,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     statusDiv.appendChild(spoilerDiv);
   } else {
     var userLink = document.createElement("a");
-    fixupLinkInFrames(userLink);
     userLink.href = "/user.html?id=" + status.account.id;
     userLink.innerHTML = status.account.display_name;
     interpolateEmoji(userLink, status.account.emojis);
@@ -177,7 +169,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
     for (var i = 0; i < links.length; i++) {
       const link = links[i];
-      fixupLinkInFrames(link);
       for (var j = 0; j < status.mentions.length; j++) {
         const mention = status.mentions[j];
         if (mention.url === link.href) {
@@ -388,7 +379,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
           statusDiv.appendChild(audio);
         default:
           var attachmentLink = document.createElement("a");
-          fixupLinkInFrames(attachmentLink);
           attachmentLink.className = "attachment";
           attachmentLink.href = attachment.url;
           attachmentLink.target = "_blank";
@@ -540,7 +530,6 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
       application.target = "_blank";
       application.href = status.application.website;
       application.innerHTML = status.application.name;
-      fixupLinkInFrames(application);
     } else {
       var application = document.createElement("span");
       application.innerHTML = status.application.name;
@@ -623,19 +612,16 @@ function appendTimelineNavBar(timelineType) {
   var homeLink = document.createElement("a");
   homeLink.href = "following.html";
   homeLink.innerHTML = "Home | ";
-  fixupLinkInFrames(homeLink);
   leftDiv.appendChild(homeLink);
 
   var localLink = document.createElement("a");
   localLink.href = "local.html";
   localLink.innerHTML = "Local | ";
-  fixupLinkInFrames(localLink);
   leftDiv.appendChild(localLink);
 
   var federatedLink = document.createElement("a");
   federatedLink.href = "federated.html";
   federatedLink.innerHTML = "Federated";
-  fixupLinkInFrames(federatedLink);
   leftDiv.appendChild(federatedLink);
 
   navbar.appendChild(leftDiv);
@@ -651,13 +637,11 @@ function appendTimelineNavBar(timelineType) {
   var notificationsLink = document.createElement("a");
   notificationsLink.href = "/notifications.html";
   notificationsLink.innerHTML = "Notifications | ";
-  fixupLinkInFrames(notificationsLink);
   rightDiv.appendChild(notificationsLink);
 
   var profileLink = document.createElement("a");
   profileLink.href = "/user.html?id=" + myId;
   profileLink.innerHTML = "My Profile";
-  fixupLinkInFrames(profileLink);
   rightDiv.appendChild(profileLink);
 
   navbar.appendChild(rightDiv);
@@ -1001,7 +985,6 @@ function getUserPage() {
           newestButton.id = "newestBtn";
           newestButton.href = window.location.pathname;
           newestButton.innerHTML = "Jump to the latest ";
-          fixupLinkInFrames(newestButton);
           timeline.appendChild(newestButton);
         }
         function fetchPosts() {
@@ -1064,7 +1047,6 @@ function getUserPage() {
                     "&after=" +
                     lastPostId;
                   olderButton.innerHTML = "View older posts";
-                  fixupLinkInFrames(olderButton);
                   timeline.appendChild(olderButton);
                   olderButton.id = "olderBtn";
                 }
@@ -1172,7 +1154,6 @@ function react(postId, emojiId, removeReaction) {
 function addComposeBtn() {
   if (window.self !== window.top) return; // don't add the compose button in deck mode
   var newPostButton = document.createElement("a");
-  fixupLinkInFrames(newPostButton);
   newPostButton.id = "newBtn";
   newPostButton.href = "/compose.html";
   newPostButton.innerHTML = "New Post";

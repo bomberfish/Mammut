@@ -120,19 +120,6 @@ function appendVideo(url, parentElement, autoplay, mimetype, loop, alt) {
   parentElement.appendChild(video);
 }
 
-function fixupLinkInFrames(el) {
-  // if (window.self !== window.top) {
-  //   console.log("fixing link", el, "for deck");
-  //   el.onclick = function () {
-  //     console.log("clicked link", el, "from deck");
-  //     if (window.history.pushState) {
-  //       window.history.pushState({}, "", el.href);
-  //     } else {
-  //       window.history.replaceState({}, "", el.href);
-  //     }
-  //   };
-  // }
-}
 
 function interpolateEmoji(contentDiv, emojis) {
   function processNode(node) {
