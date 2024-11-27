@@ -777,7 +777,7 @@ function getUserPage() {
       logOutButton.style.color = "white";
       logOutButton.style.border = "none";
       logOutButton.style.padding = "5px";
-      logOutButton.style.borderRadius = "5px";
+      logOutButton.style.borderRadius = "8px";
       document.body.appendChild(logOutButton);
     }
 

@@ -66,15 +66,19 @@ textarea,
 textarea {
     border: 1px solid #454547;
     color: #000;
-    border-radius: .25em;
-    -moz-border-radius: .25em;
-    -webkit-border-radius: .25em;
+    border-radius: .8em;
+    -moz-border-radius: .8em;
+    -webkit-border-radius: .8em;
     padding: .5em
 }
 
 body {
     background-color: #fdfdff;
     color: #000002;
+}
+
+frameset {
+    border-color: #454547;
 }
 
 a,
@@ -92,10 +96,11 @@ a:hover {
     font-size: .8em
 }
 
+.notificationItem,
 .status {
-    padding: .25em .5em;
-    margin-top: .5em;
-    margin-bottom: .5em;
+    padding: .75em;
+    margin-top: .85em;
+    margin-bottom: .85em;
     margin-left: .1em;
     margin-right: .1em;
     cursor: pointer;
@@ -133,9 +138,16 @@ a:hover {
 #olderBtn,
 .attachment,
 .status {
-    border-radius: .25em;
-    -moz-border-radius: .25em;
-    -webkit-border-radius: .25em
+    border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em
+}
+
+.notificationItem {
+    border-radius: .6em;
+    -moz-border-radius: .6em;
+    -webkit-border-radius: .6em;
+    padding: .75em;
 }
 
 .attachment {
@@ -427,14 +439,14 @@ button {
     padding: 0;
 }
 
-.notificationItem {
+/* .notificationItem {
     padding: 0.5em;
     margin-top: 0.8em;
     margin-bottom: 0.8em;
     border-radius: 0.25em;
     -moz-border-radius: 0.25em;
     -webkit-border-radius: 0.25em;
-}
+} */
 
 .status.highlight {
     background-color: #bb77003f;
@@ -482,8 +494,42 @@ frame#rightmost {
 
 iframe[src^="/emoji.html"] {
     border: 1px solid #454547;
+    border-radius: 1em;
     resize: vertical;
     margin-bottom: 0.5em;
+}
+
+blockquote {
+    margin: 0;
+    background: rgba(0, 0, 0, 0.1);
+    padding-left: 1.5em;
+    padding-top: .05em;
+    padding-bottom: .05em;
+    margin-right: 2em;
+    margin-top: 0.5em;
+    margin-bottom: .5em;
+    border-radius: 1em;
+    -webkit-border-radius: 1em;
+    -moz-border-radius: 1em;
+}
+
+blockquote {
+    position: relative;
+}
+
+blockquote::after,
+blockquote:after {
+    content: "";
+    width: 1em;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    background: #000;
+    border-radius: 1em 0 0 1em;
+    -webkit-border-radius: 1em 0 0 1em;
+    -moz-border-radius: 1em 0 0 1em;
 }
 
 @media (prefers-color-scheme:light) {
@@ -520,6 +566,10 @@ iframe[src^="/emoji.html"] {
         color: #fdfdff;
     }
 
+    frameset {
+        border-color: #454547;
+    }
+
     a,
     a:visited {
         color: #3898ff
@@ -537,6 +587,15 @@ iframe[src^="/emoji.html"] {
     .attachment {
         border-color: #454547;
         background-color: #313134;
+    }
+
+    blockquote {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    blockquote::after,
+    blockquote:after {
+        background: #fff;
     }
 
     #newBtn,
