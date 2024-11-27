@@ -644,7 +644,7 @@ function appendTimelineNavBar(timelineType) {
   rightDiv.style.float = "right";
 
   var bookmarksLink = document.createElement("a");
-  bookmarksLink.href = "bookmarks.html";
+  bookmarksLink.href = "/bookmarks.html";
   bookmarksLink.innerHTML = "Bookmarks | ";
   rightDiv.appendChild(bookmarksLink);
 
