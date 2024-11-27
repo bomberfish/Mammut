@@ -209,11 +209,11 @@ object.attachment {
 #ipa {
     color: #414144;
     font-weight: 400;
-    font-size: .5em;
+    font-size: .4em;
     font-style: oblique;
     position: relative;
-    top: -.25em;
-    left: .25em
+    top: -.5em;
+    left: .3em
 }
 
 .postlabel {
