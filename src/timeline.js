@@ -643,6 +643,11 @@ function appendTimelineNavBar(timelineType) {
   var rightDiv = document.createElement("div");
   rightDiv.style.float = "right";
 
+  var bookmarksLink = document.createElement("a");
+  bookmarksLink.href = "bookmarks.html";
+  bookmarksLink.innerHTML = "Bookmarks | ";
+  rightDiv.appendChild(bookmarksLink);
+
   var notificationsLink = document.createElement("a");
   notificationsLink.href = "/notifications.html";
   notificationsLink.innerHTML = "Notifications | ";
