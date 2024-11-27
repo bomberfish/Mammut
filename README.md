@@ -2,7 +2,7 @@
 
 A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Mastodon client written in **vanilla JS.**
 
-![Screenshot](/thumbnails/hero.jpeg)
+![Screenshot](/src/assets/hero.jpeg)
 
 ## Features
 

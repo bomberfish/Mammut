@@ -27,88 +27,104 @@
     </script>
     <script type="text/javascript" src="/util.js"></script>
     <style>
-      #content {
+      body {
         margin-left: 20%;
         margin-right: 20%;
+      }
+
+      #video {
+        margin-top: 2em;
         width: 60%;
       }
 
       video {
-          margin-left: 30%!important;
-          margin-top: 2em!important;
+        width: 100%;
+      }
+
+      video,
+      #video {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        display: block !important;
       }
 
       footer {
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-          padding: 0.8em
+        margin-top: 1.5em;
+        width: 100%;
+        text-align: center;
       }
 
-      @media (orientation: portrait) {
-        #content {
-          margin-left: 5%;
-          margin-right: 5%;
-          width: 90%;
-        }
-
-        footer {
-          position: static;
-          margin-top: 1em;
-        }
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 1em;
       }
     </style>
   </head>
   <body>
     <div id="content">
-        <h1>Mammut<sup id="ipa">[ˈmamət]</sup></h1>
-        <p>
-        A minimalistic, lightweight, highly-compatible, and no-frills Mastodon
-        client written in vanilla JS.
-        </p>
-        <h2>Features</h2>
-        <ul>
-            <li>Lightweight UI</li>
-            <li>
-                High compatibility – designed for browsers made in 2010 and newer.
-            </li>
-            <li>View your timelines</li>
-            <li>Create posts, and upload attachments</li>
-            <li>View and follow users</li>
-            <li>Interact with other posts: Like, Boost and Reply!</li>
-            <li>View your notifications</li>
-            <li>React to posts</li>
-        </ul>
+      <h1>Mammut<sup id="ipa">[ˈmamət]</sup></h1>
+      <p>
+        A <strong>minimalistic</strong>, <strong>lightweight</strong>,
+        <strong>highly-compatible</strong>, and
+        <strong>no-frills</strong> Mastodon client written in
+        <strong>vanilla JS</strong>.
+      </p>
+      <button onclick="window.location.href = '/login.html';">Log In</button>
+      <br />
+      <br />
+      <img src="/assets/hero.jpeg" alt="A screenshot of Mammut." />
+      <h2>Features</h2>
+      <ul>
+        <li>Lightweight UI</li>
+        <li>
+          High compatibility – designed for browsers made in 2010 and newer.
+        </li>
+        <li>View your timelines</li>
+        <li>Create posts, and upload attachments</li>
+        <li>View and follow users</li>
+        <li>Interact with other posts: Like, Boost and Reply!</li>
+        <li>View your notifications</li>
+        <li>React to posts</li>
+      </ul>
 
-        <h2>Browser Compatibility</h2>
-        <p>
+      <h2>Browser Compatibility</h2>
+      <p>
         Mammut targets the following browser versions. <br />Note that this is
-        mostly theoretical based on data from <a href="caniuse.com">Can I Use</a>,
-        and most cases have not been tested in the real world. Your mileage
-        <strong>will</strong> vary.
-        </p>
-        <ul>
-            <li>All versions of Chrome, its derivatives, and pre-Chromium Edge</li>
-            <li>Safari 4+ (<strong>Confirmed working on Safari 5.1.10 on OS X 10.6.8</strong>)</li>
-            <li>Firefox 3.5+</li>
-            <li>Internet Explorer 8+ (<strong>Confirmed working on IE11 on Windows 10 21H2</strong>)</li>
-        </ul>
-        <button onclick="window.location.href = '/login.html';">Log In</button>
-    </div>
-    <footer>
-        <div style="font-size: 0.8em; margin-bottom: 0.5em;">
-        A
-        <a href="https://bomberfish.ca" target="_blank">BomberFish Industries</a>
-        project.<br /><a target="_blank" href="https://github.com/BomberFish/Mammut"
+        mostly theoretical based on data from
+        <a href="caniuse.com">Can I Use</a>, and most cases have not been tested
+        in the real world. Your mileage <strong>will</strong> vary.
+      </p>
+      <ul>
+        <li>All versions of Chrome, its derivatives, and pre-Chromium Edge</li>
+        <li>
+          Safari 4+ (<strong
+            >Confirmed working on Safari 5.1.10 on OS X 10.6.8</strong
+          >)
+        </li>
+        <li>Firefox 3.5+</li>
+        <li>
+          Internet Explorer 8+ (<strong
+            >Confirmed working on IE11 on Windows 10 21H2</strong
+          >)
+        </li>
+      </ul>
+      <div id="video"></div>
+      <footer>
+        <div style="font-size: 0.8em; margin-bottom: 0.5em">
+          Made with ❤️ in 🇨🇦 by&nbsp;<a href="https://bomberfish.ca" target="_blank">BomberFish</a>.
+          <br /><a target="_blank" href="https://github.com/BomberFish/Mammut"
             >View the source code.</a
-        >
+          >
         </div>
         <a
-        class="subdued"
-        href="#"
-        onclick="appendVideo('/assets/pirate_irony.mp4', document.body, true, 'video/mp4'); this.onclick=''"
-        >(Partially) made for Hack Club's High Seas 2024</a
+          class="subdued"
+          href="#"
+          onclick="appendVideo('/assets/pirate_irony.mp4', document.getElementById('video'), true, 'video/mp4'); this.onclick=''"
+          >(Partially) made for Hack Club's High Seas 2024</a
         >
-    </footer>
+      </footer>
+    </div>
   </body>
 </html>
