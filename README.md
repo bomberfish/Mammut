@@ -19,6 +19,6 @@ Mammut targets the following browser versions.
 Note that this is mostly theoretical based on data from [Can I Use](https://caniuse.com), and most cases have not been tested in the real world. Your mileage **will** vary.
 
 - All versions of Chrome, its derivatives, and pre-Chromium Edge
-- Safari 4+ (**Confirmed working on Safari 5.1.10**)
+- Safari 4+ (**Confirmed working on Safari 5.1.10 on OS X 10.6.8**)
 - Firefox 3.5+
 - Internet Explorer 8+ (**Confirmed working on IE11 on Windows 10 21H2**)
