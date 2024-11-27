@@ -87,8 +87,9 @@ a:hover {
     text-decoration: underline
 }
 
-a.subdued {
-    color: #454548;
+.subdued {
+    color: #454548!important;
+    font-size: .8em
 }
 
 .status {
@@ -524,7 +525,7 @@ iframe[src^="/emoji.html"] {
         color: #3898ff
     }
 
-    a.subdued {
+    .subdued {
         color: #6f6f82;
     }
 

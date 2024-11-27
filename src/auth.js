@@ -77,6 +77,7 @@ function logOut() {
     if (xhr.status == 200) {
       localStorage.clear();
       window.top.location.href = "/domain.html";
+      window.open("/domain.html", "_top"); // in case the above doesn't work somehow idk
     } else {
       window.location.href =
         "/error.html?error=" +

@@ -21,4 +21,4 @@ Note that this is mostly theoretical based on data from [Can I Use](https://cani
 - All versions of Chrome, its derivatives, and pre-Chromium Edge
 - Safari 4+ (**Confirmed working on Safari 5.1.10**)
 - Firefox 3.5+
-- Internet Explorer 8+
+- Internet Explorer 8+ (**Confirmed working on IE11 on Windows 10 21H2**)
