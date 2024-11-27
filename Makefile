@@ -9,7 +9,7 @@ dist:
 	# Minify every css file
 	find ./dist/ -name "*.css" -exec csso {} -o {} \;
 	# Minify every html file
-	find ./dist/ -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --output {} {} \;
+	find ./dist/ -name "*.html" -exec html-minifier --collapse-whitespace --output {} {} \;
 
 clean:
 	rm -rf dist
