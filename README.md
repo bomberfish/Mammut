@@ -1,8 +1,8 @@
 # Mammut
 
-![Screenshot](/thumbnails/hero.jpeg)
+A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Mastodon client written in **vanilla JS.**
 
-A minimalistic, lightweight, highly-compatible, and no-frills Mastodon client written in vanilla JS.
+![Screenshot](/thumbnails/hero.jpeg)
 
 ## Features
 
@@ -25,7 +25,7 @@ Note that this is mostly theoretical based on data from [Can I Use](https://cani
 - Firefox 3.5+
 - Internet Explorer 8+ (**Confirmed working on IE11 on Windows 10 21H2**)
 
-## Screenshots
+## More Screenshots
 
 ![Replies and reactions](/thumbnails/replies.jpeg)
 
