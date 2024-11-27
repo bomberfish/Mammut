@@ -120,7 +120,7 @@ a:hover {
 }
 
 #timeline {
-    padding-top: 2em;
+    padding-top: 0.75em;
 }
 
 .xtraDetails {
@@ -194,6 +194,12 @@ object.attachment {
     background-color: #007bff;
     padding: .25em .5em;
     font-size: 1.2em
+}
+
+#viewOptions > label {
+    position: relative;
+    top: -0.05em;
+    margin-left: 0.05em;
 }
 
 #newBtn {

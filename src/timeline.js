@@ -942,6 +942,10 @@ function getUserPage() {
         var viewOptions = document.createElement("div");
         viewOptions.id = "viewOptions";
 
+        var title = document.createElement("h4");
+        title.innerHTML = "View Options";
+        viewOptions.appendChild(title);
+
         var onlyMedia = document.createElement("input");
         onlyMedia.type = "checkbox";
         onlyMedia.id = "onlyMedia";
