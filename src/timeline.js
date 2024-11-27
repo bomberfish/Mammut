@@ -715,24 +715,24 @@ function getPost() {
 
           appendStatuses(response.ancestors);
 
+          var mainStatus;
           grab("/api/v1/statuses/" + postId, "GET", false, function (xhr) {
             if (xhr.status == 200) {
               var response = JSON.parse(xhr.responseText);
               console.log(response);
               document.body.appendChild(appendStatus(response, "expanded"));
-              const el = document.body.querySelector(".status.id-" + postId);
-              el.classList.add("highlight");
-
-              el.scrollIntoView({block: "end", behavior: 'smooth'});
-              setTimeout(function () {
-                el.scrollIntoView({block: "end"});
-                el.scrollIntoView(true);
-                el.scrollIntoView();
-              }, 600);
+              mainStatus = document.body.querySelector(".status.id-" + postId);
+              mainStatus.classList.add("highlight");
             }
           });
 
           appendStatuses(response.descendants);
+          setTimeout(function () {
+            mainStatus.scrollIntoView({ block: "end", behavior: 'smooth' });
+            setTimeout(function () {
+              mainStatus.scrollIntoView({ block: "end" });
+            }, 600);
+          }, 300);
         } else {
           window.location.href =
             "/error.html?error=" +
