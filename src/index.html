@@ -133,10 +133,18 @@
         <a
           class="subdued"
           href="#"
-          onclick="appendVideo('/assets/pirate_irony.mp4', document.getElementById('video'), true, 'video/mp4'); this.onclick=''"
+          id = "pirate"
           >(Partially) made for Hack Club's High Seas 2024</a
         >
       </footer>
     </div>
+    <script>
+    document.getElementById('pirate').onclick = function(e) {
+      e.preventDefault();
+      appendVideo('/assets/pirate_irony.mp4', document.getElementById('video'), true, 'video/mp4');
+      this.onclick = '';
+      document.getElementById('video').scrollIntoView({block: 'start', behavior: 'smooth'});
+    }
+    </script>
   </body>
 </html>

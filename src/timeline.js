@@ -722,7 +722,13 @@ function getPost() {
               document.body.appendChild(appendStatus(response, "expanded"));
               const el = document.body.querySelector(".status.id-" + postId);
               el.classList.add("highlight");
-              el.scrollIntoView();
+
+              el.scrollIntoView({block: "end", behavior: 'smooth'});
+              setTimeout(function () {
+                el.scrollIntoView({block: "end"});
+                el.scrollIntoView(true);
+                el.scrollIntoView();
+              }, 600);
             }
           });
 
