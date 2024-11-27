@@ -79,6 +79,7 @@ body {
 
 frameset {
     border-color: #454547;
+    overflow-y: hidden;
 }
 
 a,
