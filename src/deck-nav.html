@@ -29,6 +29,9 @@
   </head>
 
   <body>
+    <form id="searchForm">
+        <input type="text" id="searchInput" name="q" placeholder="Search..." />
+    </form>
     <a href="/timelines/following.html" target="content">Home</a>
     <a href="/timelines/local.html" target="content">Local</a>
     <a href="/timelines/federated.html" target="content">Federated</a>
@@ -40,9 +43,6 @@
       onclick="if(confirm('Are you sure you want to log out?')){logOut()}"
       >Log out</a
     >
-    <form id="searchForm">
-      <input type="text" id="searchInput" name="q" placeholder="Search..." />
-    </form>
   </body>
   <script>
     var myProfileLink = document.createElement("a");

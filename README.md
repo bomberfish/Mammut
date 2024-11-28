@@ -4,6 +4,12 @@ A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Ma
 
 ![Screenshot](/src/assets/hero.jpeg)
 
+> [!IMPORTANT]
+> Mammut is still WIP. As such, bugs can be expected. I am not responsible for thermonuclear war or you getting fired because you posted something you thought was private was posted as public. YOU are choosing to use this software, and if you point the finger at me for messing up, I will laugh at you.
+
+
+> (paraphrased from the classic Android custom ROM copypasta)
+
 ## Features
 
 - Lightweight UI
@@ -14,6 +20,13 @@ A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Ma
 - Interact with other posts: Like, Boost and Reply!
 - View your notifications
 - React to posts
+
+## TODO
+
+- Private/followers-only posts
+- Direct Messages
+- Editing posts
+- Deleting posts
 
 ## Browser Compatibility
 
