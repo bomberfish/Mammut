@@ -26,7 +26,6 @@ A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Ma
 - Private/followers-only posts
 - Direct Messages
 - Editing posts
-- Deleting posts
 
 ## Browser Compatibility
 
