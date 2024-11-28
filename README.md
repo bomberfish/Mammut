@@ -23,9 +23,7 @@ A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Ma
 
 ## TODO
 
-- Private/followers-only posts
-- Direct Messages
-- Editing posts
+- Edit history
 
 ## Browser Compatibility
 

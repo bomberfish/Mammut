@@ -405,7 +405,9 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     "/compose.html?reply_id=" +
     status.id +
     "&reply_content=" +
-    encodeURIComponent(truncate(status.content, 15) + "...")
+    encodeURIComponent(truncate(status.content, 15) + "...") +
+    "&visibility=" +
+    status.visibility;
   if (status.account.id != myId) {
     link += "&reply_to=" + status.account.acct;
   }

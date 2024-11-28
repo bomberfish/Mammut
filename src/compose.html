@@ -43,6 +43,7 @@
       });
 
       function post() {
+        console.log(form.content.value, form.visibility.value);
         var content = form.content.value;
 
         uploadFile();
@@ -51,7 +52,8 @@
           data = JSON.stringify({
             status: content,
             in_reply_to_id: inReplyTo,
-            media_ids: attachments
+            media_ids: attachments,
+            visibility: form.visibility.value
           });
         } else if (editId) {
           data = JSON.stringify({
@@ -60,12 +62,16 @@
             media_attributes: editStatus.media_attributes,
             sensitive: editStatus.sensitive,
             spoiler_text: editStatus.spoiler_text,
-            visibility: editStatus.visibility,
+            visibility: form.visibility.value,
             language: editStatus.language,
             poll: editStatus.poll
           });
         } else {
-          data = JSON.stringify({ status: content, media_ids: attachments });
+          data = JSON.stringify({
+            status: content,
+            media_ids: attachments,
+            visibility: form.visibility.value
+          });
         }
         console.log(data);
         grab(
@@ -222,13 +228,13 @@
       <!-- <span id="attachmentCount">0 attachments</span> -->
       <br /><br />
       <span>
-        <!-- <label for="visibility">Visibility:</label>
+        <label for="visibility">Visibility:</label>
         <select name="visibility" id="visibility">
-            <option value="public">Public</option>
+            <option value="public" selected>Public</option>
             <option value="unlisted">Unlisted</option>
             <option value="private">Private</option>
             <option value="direct">Direct</option>
-        </select> -->
+        </select>
         <button onclick="navigation.back(); return false;">Cancel</button>
         <button type="submit" id="postButton">Post</button>
       </span>
@@ -248,6 +254,8 @@
     if (contents)
       document.getElementById("replied_content").innerHTML += contents;
 
+    form.visibility.value = getSearchParam("visibility") || "public";
+
     form.content.focus();
 
     // edit
@@ -263,6 +271,8 @@
             const status = JSON.parse(xhr.responseText);
             editStatus = status;
             const content = status.content;
+
+            form.visibility.value = status.visibility;
 
             var invisible = document.createElement("div");
             invisible.style.display = "none";
