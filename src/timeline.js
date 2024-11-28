@@ -7,7 +7,7 @@ if (domain == null || token == null) {
 var myId = localStorage.getItem("myId");
 
 function getTimeline(timelineType) {
-  appendTimelineNavBar(timelineType);
+  // appendTimelineNavBar(timelineType);
   const afterParam = getSearchParam("after");
   addComposeBtn();
 
@@ -24,7 +24,10 @@ function getTimeline(timelineType) {
         console.log(response);
         var timelineDiv = document.createElement("div");
         timelineDiv.id = "timeline";
-        if (window.self !== window.top) timelineDiv.style.paddingTop = "0.25em";
+        if (window.self === window.top) {
+          timelineDiv.style.paddingTop = "0.25em";
+          timelineDiv.style.paddingBottom = "2em";
+        }
         timelineDiv.innerHTML = "";
         if (response.length == 0) {
           timelineDiv.innerHTML = "No posts.";
@@ -597,56 +600,56 @@ function addReactions(reactions, status) {
 }
 
 function appendTimelineNavBar(timelineType) {
-  if (window.self !== window.top) return; // don't add the navbar in deck mode
+  // if (window.self !== window.top) return; // don't add the navbar in deck mode
 
-  var navbar = document.createElement("nav");
-  navbar.id = "navbar";
-
-  var leftDiv = document.createElement("div");
-  leftDiv.style.float = "left";
+  var topNav = document.createElement("nav");
+  topNav.id = "topNav";
 
   var timelinesLabel = document.createElement("span");
   timelinesLabel.innerHTML = "Timelines: ";
-  leftDiv.appendChild(timelinesLabel);
+  topNav.appendChild(timelinesLabel);
 
   var homeLink = document.createElement("a");
-  homeLink.href = "following.html";
+  homeLink.href = "/timelines/following.html";
   homeLink.innerHTML = "Home | ";
-  leftDiv.appendChild(homeLink);
+  topNav.appendChild(homeLink);
 
   var localLink = document.createElement("a");
-  localLink.href = "local.html";
+  localLink.href = "/timelines/local.html";
   localLink.innerHTML = "Local | ";
-  leftDiv.appendChild(localLink);
+  topNav.appendChild(localLink);
 
   var federatedLink = document.createElement("a");
-  federatedLink.href = "federated.html";
+  federatedLink.href = "/timelines/federated.html";
   federatedLink.innerHTML = "Federated";
-  leftDiv.appendChild(federatedLink);
+  topNav.appendChild(federatedLink);
 
-  navbar.appendChild(leftDiv);
+  document.body.appendChild(topNav);
 
-  var rightDiv = document.createElement("div");
-  rightDiv.style.float = "right";
+  var bottomNav = document.createElement("nav");
+  bottomNav.id = "bottomNav";
+
+  var searchLink = document.createElement("a");
+  searchLink.href = "/search.html";
+  searchLink.innerHTML = "Search | ";
+  bottomNav.appendChild(searchLink);
 
   var bookmarksLink = document.createElement("a");
   bookmarksLink.href = "/bookmarks.html";
   bookmarksLink.innerHTML = "Bookmarks | ";
-  rightDiv.appendChild(bookmarksLink);
+  bottomNav.appendChild(bookmarksLink);
 
   var notificationsLink = document.createElement("a");
   notificationsLink.href = "/notifications.html";
   notificationsLink.innerHTML = "Notifications | ";
-  rightDiv.appendChild(notificationsLink);
+  bottomNav.appendChild(notificationsLink);
 
   var profileLink = document.createElement("a");
   profileLink.href = "/user.html?id=" + myId;
   profileLink.innerHTML = "My Profile";
-  rightDiv.appendChild(profileLink);
+  bottomNav.appendChild(profileLink);
 
-  navbar.appendChild(rightDiv);
-
-  document.body.appendChild(navbar);
+  document.body.appendChild(bottomNav);
 }
 
 function getCurrentUserId() {
@@ -858,21 +861,7 @@ function getUserPage() {
         if (userId != myId) {
           console.log("Not my profile");
           isFollowingUser(userId, function (follows) {
-            var followBtn = document.createElement("button");
-            followBtn.id = "followBtn";
-            followBtn.innerHTML = follows ? "Unfollow" : "Follow";
-            followBtn.style.fontSize = "1.1em";
-            followBtn.style.fontWeight = "600";
-            followBtn.onclick = function () {
-              changeFollowStatus(follows, userId, function (success) {
-                if (success) {
-                  follows = !follows;
-                  followBtn.innerHTML = follows ? "Unfollow" : "Follow";
-                } else {
-                  alert("Error changing follow status");
-                }
-              });
-            };
+            const followBtn = createFollowButton(follows, userId);
             followBtn.style.float = "right";
             followBtn.style.position = "relative";
             followBtn.style.bottom = "50px";
@@ -933,6 +922,10 @@ function getUserPage() {
 
         var timeline = document.createElement("div");
         timeline.id = "timeline";
+
+        if (window.self === window.top) {
+          timeline.style.paddingBottom = "2em"
+        }
 
         var viewOptions = document.createElement("div");
         viewOptions.id = "viewOptions";
@@ -1192,4 +1185,9 @@ window.addEventListener("message", function (e) {
   } else if (e.data.type == "timeline-update-request") {
     window.location.reload();
   }
+});
+
+
+window.addEventListener("DOMContentLoaded", function () {
+  if (window.self === window.top) appendTimelineNavBar();
 });

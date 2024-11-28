@@ -170,6 +170,25 @@ function interpolateEmoji(contentDiv, emojis) {
   processNode(contentDiv);
 }
 
+function createFollowButton(follows, userId) {
+  var followBtn = document.createElement("button");
+  followBtn.className = "followBtn";
+  followBtn.innerHTML = follows ? "Unfollow" : "Follow";
+  // followBtn.style.fontSize = "1.1em";
+  // followBtn.style.fontWeight = "600";
+  followBtn.onclick = function () {
+    changeFollowStatus(follows, userId, function (success) {
+      if (success) {
+        follows = !follows;
+        followBtn.innerHTML = follows ? "Unfollow" : "Follow";
+      } else {
+        alert("Error changing follow status");
+      }
+    });
+  };
+  return followBtn;
+}
+
 function min(t, e) {
   return t < e ? t : e;
 }

@@ -57,6 +57,7 @@ ul {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Lucida Grande", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "BBAlpha Sans", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif, serif, monospace, "SystemEmoji", "RemoteEmoji";
 }
 
+.serpAccount,
 .status,
 textarea,
 .notificationItem {
@@ -97,6 +98,7 @@ a:hover {
     font-size: .8em
 }
 
+.serpAccount,
 .notificationItem,
 .status {
     padding: .75em;
@@ -138,6 +140,7 @@ a:hover {
 #newBtn,
 #olderBtn,
 .attachment,
+.serpAccount,
 .status {
     border-radius: 1em;
     -moz-border-radius: 1em;
@@ -204,7 +207,7 @@ object.attachment {
 
 #newBtn {
     position: fixed;
-    bottom: 1em;
+    bottom: 2em;
     right: 1em
 }
 
@@ -228,15 +231,24 @@ object.attachment {
     margin-bottom: .25em
 }
 
-#navbar {
+#topNav,
+#bottomNav {
     position: fixed;
-    top: 0;
     left: 0;
     right: 0;
     width: 100%;
     padding: 6px;
     background-color: #fdfdff;
     color: #000002;
+    z-index: 100;
+}
+
+#topNav {
+    top: 0;
+}
+
+#bottomNav {
+    bottom: 0;
 }
 
 .spoiler {
@@ -302,6 +314,7 @@ button .btn-inner-text {
     font-size: 1.3em;
     height: 1.5em;
 }
+
 
 button {
     cursor: pointer;
@@ -539,6 +552,14 @@ blockquote:after {
     -moz-border-radius: 1em 0 0 1em;
 }
 
+.serpName {
+    margin-bottom: 0.2em;
+}
+
+.serpHandle {
+    font-size: 0.8em;
+}
+
 @media (prefers-color-scheme:light) {
     textarea {
         background-color: unset;
@@ -586,6 +607,7 @@ blockquote:after {
         color: #6f6f82;
     }
 
+    .serpAccount,
     .notificationItem,
     .status {
         background-color: #212124
@@ -621,10 +643,10 @@ blockquote:after {
         color: #dfdfe2;
     }
 
-    #navbar {
+    #topNav,
+    #bottomNav {
         background-color: #121216;
         color: #fdfdff;
-        z-index: 100;
     }
 
     .xtraDetails,

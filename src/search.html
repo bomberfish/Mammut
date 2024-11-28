@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Search</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <script type="text/javascript" src="/timeline.js"></script>
+    <style>
+      /* button,
+      h3 {
+        display: inline;
+      } */
+
+      #loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%); /* IE 9 */
+        -webkit-transform: translate(-50%, -50%); /* Safari and Chrome */
+
+        width: 3em;
+        height: 3em;
+
+        -ms-interpolation-mode: nearest-neighbor;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: pixelated;
+      }
+
+      form {
+          width: 100%;
+      }
+
+      form input {
+          width: 90%;
+      }
+    </style>
+    <script>
+      const query = getSearchParam("q")
+      // var token = localStorage.getItem("access_token");
+      // var domain = localStorage.getItem("instanceDomain");
+
+      function search(query, container) {
+        if (!query) return;
+        container.innerHTML = '<img id="loading" src="/assets/search.gif" />'
+
+        var endpoint = "/api/v2/search?q=" + encodeURIComponent(query);
+
+        grab(endpoint, "GET", true, function(xhr) {
+          if (xhr.status != 200) return;
+          var response = JSON.parse(xhr.responseText);
+          console.log(response);
+          container.innerHTML = "<h2>Accounts</h2";
+
+          for (var i = 0; i < response.accounts.length; i++) {
+            acct = response.accounts[i];
+
+            var wrapper = document.createElement("div");
+            wrapper.className = "serpAccount"
+
+            wrapper.onclick = function(e) {
+              if (wrapper != e.target) return;
+              window.location.href = "/user.html?id=" + acct.id;
+            }
+
+            var name = document.createElement("div");
+            name.className = "serpName"
+            name.textContent = acct.display_name||acct.username;
+            interpolateEmoji(name, acct.emojis);
+            wrapper.appendChild(name);
+
+            var handle = document.createElement("div");
+            handle.className = "serpHandle"
+            handle.textContent = "@" + acct.acct;
+            wrapper.appendChild(handle);
+
+            isFollowingUser(acct.id, function (follows) {
+              console.warn(follows);
+              const followBtn = createFollowButton(follows, acct.id);
+              followBtn.style.float = "right";
+              wrapper.appendChild(followBtn);
+            });
+
+            container.appendChild(wrapper);
+          }
+
+          container.innerHTML += "<h2>Posts</h2>";
+          for (var i = 0; i < response.statuses.length; i++) {
+            container.appendChild(appendStatus(response.statuses[i]))
+          }
+        })
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="header">
+      <h1>Search</h1>
+      <form id="searchAgain">
+          <input type="text" id="search" name="q" placeholder="Search..." />
+          <button type="submit">Search</button>
+      </form>
+    </div>
+    <div id="results">
+
+    </div>
+  </body>
+  <script>
+    if (window.self !== window.top) document.getElementById("searchAgain").style.display = "none";
+    search(query, document.getElementById("results"));
+    if (query) document.getElementById("search").value = query;
+  </script>
+</html>

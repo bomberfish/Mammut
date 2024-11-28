@@ -19,6 +19,12 @@
       a {
         display: block;
       }
+      #searchForm,
+      #searchForm * {
+          width: 98%;
+          margin-top: 0.3em;
+          margin-bottom: 0.3em;
+      }
     </style>
   </head>
 
@@ -34,6 +40,9 @@
       onclick="if(confirm('Are you sure you want to log out?')){logOut()}"
       >Log out</a
     >
+    <form id="searchForm">
+      <input type="text" id="searchInput" name="q" placeholder="Search..." />
+    </form>
   </body>
   <script>
     var myProfileLink = document.createElement("a");
@@ -42,5 +51,17 @@
     myProfileLink.target = "content";
     myProfileLink.textContent = "My Profile";
     document.getElementById("sacrifice").outerHTML = myProfileLink.outerHTML;
+
+    var searchForm = document.getElementById("searchForm");
+    searchForm.onsubmit = handleSearch;
+
+    function handleSearch(e) {
+      if (!e) e = window.event;
+      if (e.preventDefault) e.preventDefault();
+      else e.returnValue = false;
+
+      var query = document.getElementById("searchInput").value;
+      window.open("/search.html?q=" + encodeURIComponent(query), "content");
+    }
   </script>
 </html>
