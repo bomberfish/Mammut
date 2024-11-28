@@ -514,7 +514,9 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
   postActions.appendChild(reactButton);
 
-  if (status.id == myId) {
+  // console.warn(status.account.id, myId);
+  if (status.account.id == myId) {
+    console.log("this is your post, adding delete button")
     var deleteButton = document.createElement("button");
     deleteButton.className = "postAction deleteButton";
     deleteButton.innerHTML =
