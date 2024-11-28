@@ -405,7 +405,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     "/compose.html?reply_id=" +
     status.id +
     "&reply_content=" +
-    encodeURIComponent(truncate(status.content, 100));
+    encodeURIComponent(truncate(status.content, 15) + "...")
   if (status.account.id != myId) {
     link += "&reply_to=" + status.account.acct;
   }
@@ -533,7 +533,15 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     };
     postActions.appendChild(deleteButton);
 
-
+    var editButton = document.createElement("button");
+    editButton.className = "postAction deleteButton";
+    editButton.title = "Edit post";
+    editButton.innerHTML =
+      '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.3792 10.1197"><g><rect height="10.1197" opacity="0" width="12.3792" x="0" y="0"/><path d="M11.0978 8.83672C11.0978 9.11016 10.8722 9.33574 10.6056 9.33574L2.98457 9.33574L3.9807 8.34453L10.6056 8.34453C10.8722 8.34453 11.0978 8.57012 11.0978 8.83672Z" fill="white" /><path d="M2.34097 8.85039L8.05581 3.14922L7.03042 2.12383L1.31558 7.825L0.816555 9.06231C0.761868 9.19902 0.912258 9.36309 1.05581 9.31523ZM8.548 2.66387L9.12906 2.09648C9.41616 1.80254 9.43667 1.48809 9.17691 1.22832L8.95816 1.01641C8.69839 0.749805 8.38394 0.777149 8.09683 1.06426L7.51577 1.63164Z" /></g></svg></span>';
+    editButton.onclick = function () {
+      window.open("/compose.html?content=" + encodeURIComponent(status.content) + "&editing=" + status.id, "compose");
+    };
+    postActions.appendChild(editButton);
   }
 
   statusDiv.appendChild(postActions);

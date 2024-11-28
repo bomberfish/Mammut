@@ -22,11 +22,15 @@
     </script>
     <script type="text/javascript" src="/util.js"></script>
     <script>
+      console.log(window.location.href);
       var alts = [];
       var attachments = [];
       console.log("COMPOSE", alts,attachments);
 
       const inReplyTo = getSearchParam("reply_id");
+      const editId = getSearchParam("editing");
+
+      var editStatus = null;
 
       var token = localStorage.getItem("access_token");
       var domain = localStorage.getItem("instanceDomain");
@@ -49,13 +53,24 @@
             in_reply_to_id: inReplyTo,
             media_ids: attachments
           });
+        } else if (editId) {
+          data = JSON.stringify({
+            status: content,
+            media_ids: editStatus.media_ids,
+            media_attributes: editStatus.media_attributes,
+            sensitive: editStatus.sensitive,
+            spoiler_text: editStatus.spoiler_text,
+            visibility: editStatus.visibility,
+            language: editStatus.language,
+            poll: editStatus.poll
+          });
         } else {
           data = JSON.stringify({ status: content, media_ids: attachments });
         }
         console.log(data);
         grab(
-          "/api/v1/statuses",
-          "POST",
+          "/api/v1/statuses" + (editId ? "/" + editId : ""),
+          editId ? "PUT" : "POST",
           true,
           function (xhr) {
             if (xhr.status == 200) {
@@ -202,13 +217,20 @@
         type="file"
         name="media"
         multiple
-        onchange="alts.push(prompt('Enter alt text for file ' + alts.length + 1)); return false;"
+        onchange="alts.push(prompt('Enter alt text for file ' + (alts.length + 1))); return false;"
       />
       <!-- <span id="attachmentCount">0 attachments</span> -->
       <br /><br />
       <span>
+        <!-- <label for="visibility">Visibility:</label>
+        <select name="visibility" id="visibility">
+            <option value="public">Public</option>
+            <option value="unlisted">Unlisted</option>
+            <option value="private">Private</option>
+            <option value="direct">Direct</option>
+        </select> -->
         <button onclick="navigation.back(); return false;">Cancel</button>
-        <button type="submit">Post</button>
+        <button type="submit" id="postButton">Post</button>
       </span>
     </form>
   </body>
@@ -226,12 +248,65 @@
     if (contents)
       document.getElementById("replied_content").innerHTML += contents;
 
+    form.content.focus();
+
+    // edit
+    if (editId) {
+      // disable post button until parsing is complete
+      form.postButton.disabled = true;
+      grab(
+        "/api/v1/statuses/" + editId,
+        "GET",
+        true,
+        function (xhr) {
+          if (xhr.status == 200) {
+            const status = JSON.parse(xhr.responseText);
+            editStatus = status;
+            const content = status.content;
+
+            var invisible = document.createElement("div");
+            invisible.style.display = "none";
+            invisible.id = "invisible";
+            invisible.innerHTML = content;
+            document.body.appendChild(invisible);
+
+            // parse our html into markdown
+            for (var i = 0; i < invisible.children.length; i++) {
+              var child = invisible.children[i];
+              if (child.tagName.match(/^H[1-6]$/)) {
+                var level = child.tagName[1];
+                var markdownText = '#'.repeat(level) + ' ' + child.innerHTML;
+                markdownText = markdownText.replace(/<strong>(.*?)<\/strong>/g, '**$1**');
+                markdownText = markdownText.replace(/<em>(.*?)<\/em>/g, '*$1*');
+                markdownText = markdownText.replace(/<a href="(.*?)".*?>(.*?)<\/a>/g, '[$2]($1)');
+                markdownText = markdownText.replace(/<[^>]+>/g, '');
+                form.content.value += markdownText + "\n";
+              } else if (child.tagName == "P") {
+                var markdownText = child.innerHTML;
+                markdownText = markdownText.replace(/<strong>(.*?)<\/strong>/g, '**$1**');
+                markdownText = markdownText.replace(/<em>(.*?)<\/em>/g, '*$1*');
+                markdownText = markdownText.replace(/<a href="(.*?)".*?>(.*?)<\/a>/g, '[$2]($1)');
+                markdownText = markdownText.replace(/<[^>]+>/g, '');
+                form.content.value += markdownText + "\n";
+              }
+            }
+
+            // finally, re-enable the post button
+            form.postButton.disabled = false;
+          } else {
+            alert("Failed to load post: " + xhr.responseText);
+          }
+        }
+      );
+    }
+
+
     const replyUser = getSearchParam("reply_to");
     if (replyUser)
       form.content.value = "@" + replyUser + " " + form.content.value;
 
     document.body.addEventListener("keydown", function (e) {
-      if (!(e.keyCode == 13 && (e.metaKey || e.ctrlKey))) return;
+      if (!(e.keyCode == 13 && (e.metaKey || e.ctrlKey)) || form.content.value == "" || form.postButton.disabled) return;
       post();
     });
   </script>
