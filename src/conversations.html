@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#121212"
+    />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mammut - Direct Messages</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        if (typeof window.JSON !== "object") {
+          document.write('<script src="/json2.js"><\/script>');
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="/util.js"></script>
+    <script type="text/javascript" src="/timeline.js"></script>
+    <style>
+      button,
+      h1 {
+        display: inline;
+      }
+    </style>
+    <script>
+      // var token = localStorage.getItem("access_token");
+      // var domain = localStorage.getItem("instanceDomain");
+
+      function getMessages() {
+        grab("/api/v1/conversations", "GET", true, function (xhr) {
+          if (xhr.status !== 200);
+          var response = JSON.parse(xhr.responseText);
+          console.log(response);
+
+          for (var i = 0; i < response.length; i++) {
+            var dm = response[i];
+            const st = appendStatus(
+              dm.last_status,
+              "conversations" + (dm.unread ? " unread" : ""),
+            );
+
+            var readButton = document.createElement("button");
+            readButton.innerHTML = "Mark as read";
+            readButton.onclick = function () {
+              grab(
+                "/api/v1/conversations/" + dm.id + "/read",
+                "POST",
+                true,
+                function (xhr) {
+                  if (xhr.status === 200) {
+                    st.classList.remove("unread");
+                    readButton.remove();
+                  } else {
+                    alert("Failed to mark conversation as read: " + xhr.responseText);
+                  }
+                },
+              );
+            };
+            // readButton.style.position = "relative"
+            // readButton.style.right = "1em";
+            // readButton.style.top = "1em";
+
+            if (!dm.unread) {
+              readButton.style.display = "none";
+            }
+            st.appendChild(readButton);
+
+            document.body.appendChild(st);
+          }
+        });
+      }
+
+      // function readAll() {
+      //   grab("/api/v1/notifications/clear", "POST", true, function (xhr) {
+      //     if (xhr.status === 200) {
+      //       document.querySelector("h3").innerHTML = "Notifications";
+      //       document.querySelector("#notificationList").remove();
+      //       getNotifications();
+      //     } else {
+      //       alert("Failed to clear notifications: " + xhr.responseText);
+      //     }
+      //   });
+      // }
+
+      // getNotifications();
+    </script>
+  </head>
+
+  <body>
+    <div id="timeline">
+      <div id="header">
+        <h1>Direct Messages</h1>
+        &nbsp;
+        <!-- <button onclick="readAll()">Read</button> -->
+        <button onclick="window.location.reload();">Refresh</button>
+      </div>
+    </div>
+    <script>
+      getMessages();
+    </script>
+  </body>
+</html>

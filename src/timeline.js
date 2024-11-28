@@ -403,7 +403,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
   var link =
     "/compose.html?reply_id=" +
     status.id +
-    "&status_content=" +
+    "&reply_content=" +
     encodeURIComponent(truncate(status.content, 100));
   if (status.account.id != myId) {
     link += "&reply_to=" + status.account.acct;
@@ -514,7 +514,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
   postActions.appendChild(reactButton);
 
-  if (status.account.id == myId) {
+  if (status.id == myId) {
     var deleteButton = document.createElement("button");
     deleteButton.className = "postAction deleteButton";
     deleteButton.innerHTML =

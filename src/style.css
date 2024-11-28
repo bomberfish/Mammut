@@ -468,7 +468,8 @@ button {
     -webkit-border-radius: 0.25em;
 } */
 
-.status.highlight {
+.status.highlight,
+.status.conversations.unread {
     background-color: #bb77003f;
 }
 
@@ -675,7 +676,8 @@ blockquote:after {
         border-color: #454547;
     }
 
-    .status.highlight {
+    .status.highlight,
+    .status.conversations.unread {
         background-color: #ffcc0039;
     }
 
