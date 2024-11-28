@@ -536,15 +536,47 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
     postActions.appendChild(deleteButton);
 
     var editButton = document.createElement("button");
-    editButton.className = "postAction deleteButton";
+    editButton.className = "postAction editButton";
     editButton.title = "Edit post";
     editButton.innerHTML =
-      '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.3792 10.1197"><g><rect height="10.1197" opacity="0" width="12.3792" x="0" y="0"/><path d="M11.0978 8.83672C11.0978 9.11016 10.8722 9.33574 10.6056 9.33574L2.98457 9.33574L3.9807 8.34453L10.6056 8.34453C10.8722 8.34453 11.0978 8.57012 11.0978 8.83672Z" fill="white" /><path d="M2.34097 8.85039L8.05581 3.14922L7.03042 2.12383L1.31558 7.825L0.816555 9.06231C0.761868 9.19902 0.912258 9.36309 1.05581 9.31523ZM8.548 2.66387L9.12906 2.09648C9.41616 1.80254 9.43667 1.48809 9.17691 1.22832L8.95816 1.01641C8.69839 0.749805 8.38394 0.777149 8.09683 1.06426L7.51577 1.63164Z" /></g></svg></span>';
+      '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.3792 10.1197"><g><rect height="10.1197" opacity="0" width="12.3792" x="0" y="0"/><path d="M11.0978 8.83672C11.0978 9.11016 10.8722 9.33574 10.6056 9.33574L2.98457 9.33574L3.9807 8.34453L10.6056 8.34453C10.8722 8.34453 11.0978 8.57012 11.0978 8.83672Z" /><path d="M2.34097 8.85039L8.05581 3.14922L7.03042 2.12383L1.31558 7.825L0.816555 9.06231C0.761868 9.19902 0.912258 9.36309 1.05581 9.31523ZM8.548 2.66387L9.12906 2.09648C9.41616 1.80254 9.43667 1.48809 9.17691 1.22832L8.95816 1.01641C8.69839 0.749805 8.38394 0.777149 8.09683 1.06426L7.51577 1.63164Z" /></g></svg></span>';
     editButton.onclick = function () {
       window.open("/compose.html?content=" + encodeURIComponent(status.content) + "&editing=" + status.id, "compose");
     };
     postActions.appendChild(editButton);
+
+    var pinButton = document.createElement("button");
+    pinButton.className = "postAction pinButton";
+    pinButton.title = "Pin post";
+
+    if (status.pinned) {
+      pinButton.classList.add("active");
+    }
+
+    pinButton.innerHTML = '<span class="btn-inner"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 9.00293 12.9131"><g><rect height="12.9131" opacity="0" width="9.00293" x="0" y="0"/><path d="M4.25879 12.9131C4.40918 12.9131 4.79199 12.1611 4.79199 11.252L4.79199 8.44922L3.73242 8.44922L3.73242 11.252C3.73242 12.1611 4.11523 12.9131 4.25879 12.9131ZM0.84082 8.95508L7.67676 8.95508C8.19629 8.95508 8.52441 8.62695 8.52441 8.13477C8.52441 6.54883 6.71973 4.91504 4.25879 4.91504C1.80469 4.91504 0 6.54883 0 8.13477C0 8.62695 0.328125 8.95508 0.84082 8.95508ZM1.10059 8.03223C0.984375 8.03223 0.936523 7.9707 0.963867 7.82031C1.10059 6.95215 2.26953 5.80371 4.25879 5.80371C6.25488 5.80371 7.41699 6.95215 7.56055 7.82031C7.58789 7.9707 7.5332 8.03223 7.41699 8.03223ZM0.635742 0.895508C0.635742 1.07324 0.704102 1.26465 0.854492 1.45605C1.12793 1.81152 1.77051 2.31738 2.48828 2.78906L2.29004 5.63965L3.26758 5.63965L3.46582 2.32422C3.47266 2.24219 3.45898 2.21484 3.4043 2.1875C2.56348 1.77051 1.98926 1.33301 1.94141 1.25781C1.88672 1.18945 1.93457 1.1416 1.98926 1.1416L6.53516 1.1416C6.58301 1.1416 6.63086 1.18945 6.58301 1.25781C6.52832 1.33301 5.96094 1.77051 5.11328 2.1875C5.06543 2.21484 5.05176 2.24219 5.05859 2.32422L5.25684 5.63965L6.23438 5.63965L6.0293 2.78906C6.74707 2.31738 7.38965 1.81152 7.66309 1.45605C7.82031 1.26465 7.88867 1.07324 7.88867 0.895508C7.88867 0.546875 7.61523 0.287109 7.21875 0.287109L1.30566 0.287109C0.902344 0.287109 0.635742 0.546875 0.635742 0.895508Z"/></g></svg></span>'
+
+    pinButton.onclick = function () {
+      if (status.pinned) {
+        grab("/api/v1/statuses/" + status.id + "/unpin", "POST", true, function (xhr) {
+          if (xhr.status === 200) {
+            pinButton.classList.remove("active");
+          } else {
+            alert("Error: " + xhr.responseText);
+          }
+        });
+      } else {
+        grab("/api/v1/statuses/" + status.id + "/pin", "POST", true, function (xhr) {
+          if (xhr.status === 200) {
+            pinButton.classList.add("active");
+          } else {
+            alert("Error: " + xhr.responseText);
+          }
+        });
+      }
+    }
+    postActions.appendChild(pinButton);
   }
+
 
   statusDiv.appendChild(postActions);
 

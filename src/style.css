@@ -280,7 +280,7 @@ object.attachment {
 
 button svg {
     display: inline;
-    fill: #000002 !important;
+    fill: #000002;
     width: 1.5em;
     height: 1.5em;
     position: relative;
@@ -293,15 +293,23 @@ button .btn-inner-text {
 }
 
 .repostButton.active svg {
-    fill: green !important;
+    fill: green;
 }
 
 .favButton.active svg {
-    fill: #ff9944 !important;
+    fill: #ff9944;
 }
 
 .bookmarkButton.active svg {
-    fill: #007bff !important;
+    fill: #007bff;
+}
+
+.pinButton.active svg {
+    fill: #228888;
+}
+
+.deleteButton svg {
+    fill: #ff4444;
 }
 
 .reaction>*,
@@ -575,19 +583,27 @@ blockquote:after {
     }
 
     button svg {
-        fill: #fdfdff !important;
+        fill: #fdfdff;
     }
 
     .repostButton.active svg {
-        fill: #55ff88 !important;
+        fill: #55ff88;
     }
 
     .favButton.active svg {
-        fill: yellow !important;
+        fill: yellow;
     }
 
     .bookmarkButton.active svg {
-        fill: #3898ff !important;
+        fill: #3898ff;
+    }
+
+    .pinButton.active svg {
+        fill: aqua;
+    }
+
+    .deleteButton svg {
+        fill: #ff4444;
     }
 
     body {
