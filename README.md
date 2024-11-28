@@ -5,7 +5,7 @@ A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Ma
 ![Screenshot](/src/assets/hero.jpeg)
 
 > [!IMPORTANT]
-> Mammut is still WIP. As such, bugs can be expected. I am not responsible for thermonuclear war or you getting fired because you posted something you thought was private was posted as public. YOU are choosing to use this software, and if you point the finger at me for messing up, I will laugh at you.
+> Mammut is still WIP. As such, bugs can be expected. I am not responsible for thermonuclear war or you getting fired because you publicly posted something you thought was private. YOU are choosing to use this software, and if you point the finger at me for messing up, I will laugh at you.
 
 
 > (paraphrased from the classic Android custom ROM copypasta)
