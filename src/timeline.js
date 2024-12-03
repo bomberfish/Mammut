@@ -23,6 +23,23 @@ function getTimeline(timelineType) {
         var response = JSON.parse(xhr.responseText);
         console.log(response);
         var timelineDiv = document.createElement("div");
+
+        var h1 = document.createElement("h1");
+        switch (timelineType) {
+          case "following":
+            h1.innerHTML = "Home";
+            break;
+          case "public?local=true":
+            h1.innerHTML = "Local";
+            break;
+          case "public?remote=true":
+            h1.innerHTML = "Federated";
+            break;
+          default:
+            h1.innerHTML = timelineType.charAt(0).toUpperCase() + timelineType.slice(1);
+        }
+        document.body.appendChild(h1);
+
         timelineDiv.id = "timeline";
         if (window.self === window.top) {
           timelineDiv.style.paddingTop = "0.25em";

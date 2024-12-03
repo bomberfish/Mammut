@@ -78,6 +78,12 @@ body {
     color: #000002;
 }
 
+code {
+    background: #fff;
+    padding: 0.1em;
+    border-radius: 0.25em;
+}
+
 frameset {
     border-color: #454547;
     overflow-y: hidden;
@@ -609,6 +615,10 @@ blockquote:after {
     body {
         background-color: #121216;
         color: #fdfdff;
+    }
+
+    code {
+        background: #010108;
     }
 
     frameset {
