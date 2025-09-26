@@ -356,6 +356,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
           audio.src = attachment.url;
           innerStatusDiv.appendChild(audio);
         default:
+          if (attachment.url === null || attachment.url === undefined) break;
           var attachmentLink = document.createElement("a");
           attachmentLink.className = "attachment";
           attachmentLink.href = attachment.url;
