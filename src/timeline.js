@@ -73,21 +73,7 @@ function getTimeline(timelineType) {
         }
         document.body.appendChild(timelineDiv);
       } else {
-        window.location.href =
-          "/error.html?error=" +
-          truncate(
-            encodeURIComponent(
-              "Endpoint /api/v1/timelines/" +
-                timelineType +
-                " returned code " +
-                xhr.status +
-                " and readyState " +
-                xhr.readyState +
-                "\n" +
-                xhr.responseText
-            ),
-            2000
-          );
+        errorPage("Endpoint /api/v1/timelines/" + timelineType + " returned code " + xhr.status + " and readyState " + xhr.readyState + "\n" + xhr.responseText);
       }
     }
   );
@@ -698,7 +684,7 @@ function deletePost(status) {
     true,
     function (xhr) {
       if (xhr.status === 200) {
-        window.location.href = "/timelines/local.html";
+        window.location.href = "/feed.html?view=local";
       } else {
         alert("Error: " + xhr.responseText);
       }
@@ -718,17 +704,17 @@ function appendTimelineNavBar(timelineType) {
   topNav.appendChild(timelinesLabel);
 
   var homeLink = document.createElement("a");
-  homeLink.href = "/timelines/following.html";
+  homeLink.href = "/feed.html";
   homeLink.innerHTML = "Home | ";
   topNav.appendChild(homeLink);
 
   var localLink = document.createElement("a");
-  localLink.href = "/timelines/local.html";
+  localLink.href = "/feed.html?view=local";
   localLink.innerHTML = "Local | ";
   topNav.appendChild(localLink);
 
   var federatedLink = document.createElement("a");
-  federatedLink.href = "/timelines/federated.html";
+  federatedLink.href = "/feed.html?view=federated";
   federatedLink.innerHTML = "Federated";
   topNav.appendChild(federatedLink);
 
@@ -845,19 +831,14 @@ function getPost() {
             }, 600);
           }, 300);
         } else {
-          window.location.href =
-            "/error.html?error=" +
-            truncate(
-              encodeURIComponent(
-                "Endpoint /api/v1/statuses/" +
-                  postId +
-                  "/context returned code " +
-                  xhr.status +
-                  "\n" +
-                  xhr.responseText
-              ),
-              2000
-            );
+          errorPage(
+            "Endpoint /api/v1/statuses/" +
+              postId +
+              "/context returned code " +
+              xhr.status +
+              "\n" +
+              xhr.responseText
+          );
         }
       }
     );
@@ -1159,42 +1140,28 @@ function getUserPage() {
                 }
               }
             } else {
-              window.location.href =
-                "/error.html?error=" +
-                truncate(
-                  encodeURIComponent(
-                    "Endpoint /api/v1/accounts/" +
-                      userId +
-                      "/statuses returned code " +
-                      postsXhr.status +
-                      " and readyState " +
-                      postsXhr.readyState +
-                      "\n" +
-                      postsXhr.responseText
-                  ),
-                  2000
-                );
+              errorPage("Endpoint /api/v1/accounts/" +
+                userId +
+                "/statuses returned code " +
+                postsXhr.status +
+                " and readyState " +
+                postsXhr.readyState +
+                "\n" +
+                postsXhr.responseText);
             }
           });
         }
 
         fetchPosts();
       } else {
-        window.location.href =
-          "/error.html?error=" +
-          truncate(
-            encodeURIComponent(
-              "Endpoint /api/v1/accounts/" +
-                userId +
-                " returned code " +
-                xhr.status +
-                " and readyState " +
-                xhr.readyState +
-                "\n" +
-                xhr.responseText
-            ),
-            2000
-          );
+        errorPage("Endpoint /api/v1/accounts/" +
+          userId +
+          " returned code " +
+          xhr.status +
+          " and readyState " +
+          xhr.readyState +
+          "\n" +
+          xhr.responseText);
       }
     });
   } else {

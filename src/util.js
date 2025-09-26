@@ -40,6 +40,34 @@ function disclosure(summary, details) {
   return detailsEl; // return the whole
 }
 
+function errorPage(message) {
+  document.body.innerHTML = 
+    "<!doctype html>" +
+    "<html lang=\"en\">" +
+    "  <head>" +
+    "    <meta charset=\"UTF-8\" />" +
+    "    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />" +
+    "    <meta name=\"theme-color\" content=\"#ffffff\" />" +
+    "    <meta" +
+    "      name=\"theme-color\"" +
+    "      media=\"(prefers-color-scheme: dark)\"" +
+    "      content=\"#121212\"" +
+    "    />" +
+    "    <meta name=\"darkreader-lock\" />" +
+    "    <title>Mammut - Error</title>" +
+    "    <link rel=\"stylesheet\" href=\"style.css\" />" +
+    "    <script type=\"text/javascript\" src=\"/util.js\"></script>" +
+    "  </head>" +
+    "  <body>" +
+    "    <h1 style=\"color: red\">Error!</h1>" +
+    "    <p>There was an error processing your request. Please try again later.</p>" +
+    "    <p id=\"error\">" + message + "</p>" +
+    "  <!-- 100% privacy friendly analytics -->" +
+    "<script data-collect-dnt=\"true\" async defer src=\"https://site-stats.bomberfish.ca/latest.js\"></script>" +
+    "<noscript><img src=\"https://site-stats.bomberfish.ca/noscript.gif?collect-dnt=true\" alt=\"\" referrerpolicy=\"no-referrer-when-downgrade\" /></noscript>" +
+    "</html>";
+}
+
 function truncate(t, e) {
   return t.length > e ? t.substr(0, e - 3) + "..." : t;
 }

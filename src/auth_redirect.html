@@ -25,7 +25,7 @@
       localStorage.setItem("auth_code", code);
       window.location.href = "/auth.html";
     } else {
-      window.location.href = "error.html?error=" + "Didn't get an auth code from OAuth flow! URL we got is: " + window.location.href;
+      errorPage("Didn't get an auth code from OAuth flow! URL we got is: " + window.location.href);
     }
   </script>
 </html>

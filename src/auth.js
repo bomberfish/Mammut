@@ -33,25 +33,13 @@ function getToken() {
       localStorage.setItem("access_token", response.access_token);
       console.log("we ball");
       if (isMobile()) {
-        window.location.href = "/timelines/following.html";
+        window.location.href = "/feed.html";
       } else {
         window.location.href = "/deck.html";
       }
     } else {
       console.error(xhr.responseText);
-      window.location.href =
-        "/error.html?error=" +
-        truncate(
-          encodeURIComponent(
-            "Endpoint /oauth/token returned code " +
-              xhr.status +
-              " and readyState " +
-              xhr.readyState +
-              "\n" +
-              xhr.responseText
-          ),
-          2000
-        );
+      errorPage("Endpoint /oauth/token returned code " + xhr.status + " and readyState " + xhr.readyState + "\n" + xhr.responseText);
     }
   };
   grab(
@@ -80,18 +68,7 @@ function logOut() {
       window.top.location.href = "/domain.html";
       window.open("/domain.html", "_top"); // in case the above doesn't work somehow idk
     } else {
-      window.location.href =
-        "/error.html?error=" +
-        truncate(
-          encodeURIComponent(
-            "Endpoint /oauth/revoke returned code " +
-              xhr.status +
-              " and readyState " +
-              xhr.readyState +
-              "\n" +
-              xhr.responseText
-          ), 2000
-        );
+      errorPage("Endpoint /oauth/revoke returned code " + xhr.status + " and readyState " + xhr.readyState + "\n" + xhr.responseText);
     }
   };
   grab(
@@ -129,19 +106,7 @@ function createApp() {
       window.location.href = "auth.html";
     } else if (xhr.status != 200) {
       console.error(xhr.code, xhr.status, xhr.responseText);
-      window.location.href =
-        "/error.html?error=" +
-        truncate(
-          encodeURIComponent(
-            "Endpoint /api/v1/apps returned code " +
-              xhr.status +
-              " and readyState " +
-              xhr.readyState +
-              "\n" +
-              xhr.responseText,
-          ),
-          2000,
-        );
+      errorPage("Endpoint /api/v1/apps returned code " + xhr.status + " and readyState " + xhr.readyState + "\n" + xhr.responseText);
     }
   };
   grab(
@@ -177,7 +142,7 @@ if (
 ) {
   console.log(window.location.pathname);
   if (isMobile()) {
-    window.location.href = "/timelines/following.html";
+    window.location.href = "/feed.html";
   } else {
     window.location.href = "/deck.html";
   }
