@@ -54,7 +54,7 @@ textfield,
 th,
 tr,
 ul {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Lucida Grande", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "BBAlpha Sans", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif, serif, monospace, "SystemEmoji", "RemoteEmoji";
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Slate Pro", Slate, "Myriad Pro", "BBAlpha Sans", "Lucida Grande", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif, serif, monospace, "SystemEmoji", "RemoteEmoji";
 }
 
 .serpAccount,

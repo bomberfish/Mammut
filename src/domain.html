@@ -23,11 +23,21 @@
     <script type="text/javascript" src="/util.js"></script>
   </head>
   <body>
+    <h1>Login</h1>
     <form id="form">
-      <label for="domain">Instance domain:</label>
-      <input id="domain" name="domain" type="url" required />
+      <table>
+        <tr>
+          <td><label for="domain">Instance domain </label></td>
+          <td><input id="domain" name="domain" type="url" required /></td>
+        </tr>
+        <tr>
+          <td><label for="token">User Token (optional, advanced) </label></td>
+          <td><input id="token" name="token" /></td>
+        </tr>
+      </table>
       <button type="submit">Continue</button>
     </form>
+    <p class="postlabel">ⓘ Only use the "User Token" Field if you cannot authenticate through your instance's website.</p>
   </body>
   <script>
     document.getElementById("domain").value =
@@ -37,6 +47,14 @@
     document.getElementById("form").addEventListener("submit", function (e) {
       e.preventDefault();
       localStorage.setItem("instanceDomain", document.getElementById("domain").value);
+      if (document.getElementById("token").value.length > 0) {
+        console.log("[!] TOKEN OVERRIDE");
+        localStorage.setItem("access_token", document.getElementById("token").value);
+        // DIRTY HACK DIRTY HACK DIRTY HACK
+        localStorage.setItem("client_id", "token-override");
+        localStorage.setItem("client_secret", "token-override");
+        localStorage.setItem("auth_code", "token-override");
+      }
       createApp();
       return false;
     });

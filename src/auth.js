@@ -1,5 +1,6 @@
 // var domain = localStorage.getItem("instanceDomain");
-const redirectUri = window.location.origin + "/auth_redirect.html";
+const redirectUri = window.location.protocol + "//" + window.location.host + "/auth_redirect.html";
+console.log(redirectUri);
 
 function auth() {
   console.log("authenticate");
@@ -37,7 +38,7 @@ function getToken() {
         window.location.href = "/deck.html";
       }
     } else {
-      // console.error(xhr.responseText);
+      console.error(xhr.responseText);
       window.location.href =
         "/error.html?error=" +
         truncate(
@@ -128,19 +129,19 @@ function createApp() {
       window.location.href = "auth.html";
     } else if (xhr.status != 200) {
       console.error(xhr.code, xhr.status, xhr.responseText);
-      // window.location.href =
-      //   "/error.html?error=" +
-      //   truncate(
-      //     encodeURIComponent(
-      //       "Endpoint /api/v1/apps returned code " +
-      //         xhr.status +
-      //         " and readyState " +
-      //         xhr.readyState +
-      //         "\n" +
-      //         xhr.responseText,
-      //     ),
-      //     2000,
-      //   );
+      window.location.href =
+        "/error.html?error=" +
+        truncate(
+          encodeURIComponent(
+            "Endpoint /api/v1/apps returned code " +
+              xhr.status +
+              " and readyState " +
+              xhr.readyState +
+              "\n" +
+              xhr.responseText,
+          ),
+          2000,
+        );
     }
   };
   grab(

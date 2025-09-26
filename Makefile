@@ -5,7 +5,7 @@ dist:
 	npm install -g csso-cli
 	npm install -g html-minifier
 	# Minify every js file
-	find ./dist/ -name "*.js" -exec terser --compress --mangle --output {} {} \;
+	find ./dist/ -name "*.js" -exec terser --compress --mangle --ecma 5 --output {} {} \;
 	# Minify every css file
 	find ./dist/ -name "*.css" -exec csso {} -o {} \;
 	# Minify every html file
