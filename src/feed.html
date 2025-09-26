@@ -34,12 +34,31 @@
       try { return decodeURIComponent(m[2].replace(/\+/g, ' ')); } catch (e) { return m[2]; }
     }
     var tl = _getParam('view') || '';
-    tl = ('' + tl).toLowerCase();
+    tl = ('' + tl);
+    
+    var lowerTl = '';
+    for (var i = 0; i < tl.length; i++) {
+      var char = tl.charAt(i);
+      if (char >= 'A' && char <= 'Z') {
+      lowerTl += String.fromCharCode(char.charCodeAt(0) + 32);
+      } else {
+      lowerTl += char;
+      }
+    }
+    tl = lowerTl;
+    
     if (tl == "home" || tl == "following") tl = "home";
     else if (tl == "local") tl = "public?local=true";
     else if (tl == "federated") tl = "public?remote=true";
     else tl = "home";
     getTimeline(tl);
+
+    var titleTl = tl.charAt(0);
+    if (titleTl >= 'a' && titleTl <= 'z') {
+      titleTl = String.fromCharCode(titleTl.charCodeAt(0) - 32);
+    }
+    titleTl += tl.substring(1);
+    document.title = "Mammut - " + titleTl;
   </script>
   <!-- 100% privacy friendly analytics -->
 <script data-collect-dnt="true" async defer src="https://site-stats.bomberfish.ca/latest.js"></script>
