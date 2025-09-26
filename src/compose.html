@@ -84,7 +84,8 @@
                 window.location.href = "/compose.html";
                 window.parent.postMessage( { type: "timeline-update-request" },  "*");
               } else {
-                history.back();
+                navigation.back();
+                window.close();
               }
             } else {
               alert("Failed to post: " + xhr.responseText);
@@ -235,7 +236,7 @@
             <option value="private">Private</option>
             <option value="direct">Direct</option>
         </select>
-        <button onclick="navigation.back(); return false;">Cancel</button>
+        <button onclick="navigation.back(); window.close(); return false;">Cancel</button>
         <button type="submit" id="postButton">Post</button>
       </span>
     </form>
