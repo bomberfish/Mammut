@@ -1,5 +1,5 @@
 * {
-    color-scheme: light
+    color-scheme: light dark;
 }
 
 @font-face {
@@ -584,10 +584,6 @@ blockquote:after {
 }
 
 @media (prefers-color-scheme:dark) {
-    * {
-        color-scheme: dark;
-    }
-
     button svg {
         fill: #fdfdff;
     }
