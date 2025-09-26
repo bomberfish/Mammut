@@ -1,3 +1,7 @@
+# Waterloo
+
+A specialized version of Mammut for use on BlackBerry 10 devices.
+
 # Mammut
 
 A **minimalistic**, **lightweight**, highly-**compatible**, and **no-frills** Mastodon client written in **vanilla JS.**
