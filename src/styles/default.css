@@ -2,27 +2,6 @@
     color-scheme: light dark;
 }
 
-@font-face {
-    font-family: "SystemEmoji";
-    src: local("Apple Color Emoji"),
-        local("Segoe UI Emoji"),
-        local("Noto Color Emoji"),
-        local("Segoe UI Symbol"),
-        local("EmojiOneMozilla"),
-        local("TwemojiMozilla"),
-        local("EmojiMozilla");
-}
-
-@font-face {
-    font-family: "RemoteEmoji";
-    src: url("/assets/font/NotoColorEmoji-Regular.eot");
-    src: url("/assets/font/NotoColorEmoji-Regular.eot?#iefix") format("embedded-opentype"),
-        url("/assets/font/NotoColorEmoji-Regular.woff2") format("woff2"),
-        url("/assets/font/NotoColorEmoji-Regular.woff") format("woff"),
-        url("/assets/font/NotoColorEmoji-Regular.ttf") format("truetype"),
-        url("/assets/font/NotoEmoji-Regular.svg#NotoEmoji-Regular") format("svg");
-}
-
 body,
 caption,
 dd,

@@ -1,7 +1,24 @@
-/* Base layout and sizing for Mammut UI.
-   This file must not contain colors, fills, or backgrounds. */
+@font-face {
+    font-family: "SystemEmoji";
+    src: local("Apple Color Emoji"),
+        local("Segoe UI Emoji"),
+        local("Noto Color Emoji"),
+        local("Segoe UI Symbol"),
+        local("EmojiOneMozilla"),
+        local("TwemojiMozilla"),
+        local("EmojiMozilla");
+}
 
-/* Typography sizing (no colors) */
+@font-face {
+    font-family: "RemoteEmoji";
+    src: url("/assets/font/NotoColorEmoji-Regular.eot");
+    src: url("/assets/font/NotoColorEmoji-Regular.eot?#iefix") format("embedded-opentype"),
+        url("/assets/font/NotoColorEmoji-Regular.woff2") format("woff2"),
+        url("/assets/font/NotoColorEmoji-Regular.woff") format("woff"),
+        url("/assets/font/NotoColorEmoji-Regular.ttf") format("truetype"),
+        url("/assets/font/NotoEmoji-Regular.svg#NotoEmoji-Regular") format("svg");
+}
+
 .subdued { font-size: .8em; }
 .xtraDetails { font-size: .8em; margin-top: 1em; margin-bottom: 1em; margin-left: .1em; }
 .poll>span { font-size: .8em; }
@@ -11,14 +28,12 @@
 .reaction .inner { font-size: 1.3em; height: 1.5em; }
 #ipa { font-size: .4em; }
 
-/* Global content widths */
 .status>*>p { width: fit-content; }
 .status div { width: fit-content; }
 .content { width: 100% !important; }
 .content>p { width: fit-content; }
 .content>p, .content>p>* { max-width: 100%; }
 
-/* Spacing and containers */
 #timeline { padding-top: 0.75em; }
 
 #newBtn, #olderBtn, .attachment, .serpAccount, .status {
@@ -65,7 +80,6 @@
 #newBtn { position: fixed; bottom: 2em; right: 1em; }
 #olderBtn { text-align: center; }
 
-/* Top/bottom nav placement */
 #topNav, #bottomNav {
   position: fixed;
   left: 0; right: 0; width: 100%;
@@ -75,12 +89,10 @@
 #topNav { top: 0; }
 #bottomNav { bottom: 0; }
 
-/* Post actions */
 .postAction, .reaction { margin-right: 0.3em; padding-bottom: 0.3em; font-size: 1em; }
 .postActions, .reactions { margin: 0.2em; margin-top: 0.6em; }
 .reaction>* , .postAction>* { vertical-align: middle; }
 
-/* Inline SVG sizing */
 button svg {
   display: inline;
   width: 1.5em;
@@ -91,7 +103,6 @@ button svg {
 
 button .btn-inner-text { position: relative; bottom: 0.15em; }
 
-/* Button default appearance (no color) */
 button {
   appearance: button !important;
   -webkit-appearance: button !important;
@@ -99,13 +110,11 @@ button {
   -ms-appearance: button !important;
 }
 
-/* Frames and frameset */
 frameset { overflow-y: hidden; }
 
 frame { border-right-width: 2px; border-right-style: solid; }
 frame#rightmost { border-right: none; }
 
-/* Emoji and emote sizing/position */
 .emote {
   min-width: 1.1em;
   height: 1.1em;
@@ -118,7 +127,6 @@ frame#rightmost { border-right: none; }
 .picker-grid .emote { min-width: 2em; height: 2em; margin: 0.1em; top: 0.5em; }
 .picker-grid .emote:hover { min-width: 2em; height: 2em; top: 0.5em; }
 
-/* Polls */
 .poll { width: 100%; }
 .pollOption { height: 1.75em; margin: 0.2em; }
 .pollOptionInner {
@@ -134,26 +142,20 @@ frame#rightmost { border-right: none; }
 .pollOption * { z-index: 2; }
 .pollOptionInner { z-index: 0; }
 
-/* Tables */
 #userTable { border-collapse: collapse; }
 #userTable td { padding: 0.3em; }
 #userTable, #userTable td { border-width: 1px; border-style: solid; }
 
-/* Images */
 .reactionImage { height: 1.5rem; width: auto; }
 
-/* Lists */
 #notificationList { list-style: none; padding: 0; }
 
-/* Misc spacing */
 #bio { margin-top: 1em; margin-bottom: 1em; }
 
-/* Hidden elements */
 #sacrifice, .sacrifice {
   width: 0; height: 0; overflow: hidden; margin: 0; padding: 0; border: 0;
 }
 
-/* Emoji picker iframe */
 iframe[src^="/emoji.html"] {
   border-width: 1px;
   border-style: solid;
@@ -162,7 +164,6 @@ iframe[src^="/emoji.html"] {
   margin-bottom: 0.5em;
 }
 
-/* Blockquotes (structure only) */
 blockquote {
   margin: 0;
   padding-left: 1.5em;
@@ -190,10 +191,8 @@ blockquote::after, blockquote:after {
   -moz-border-radius: 1em 0 0 1em;
 }
 
-/* Search results */
 .serpName { margin-bottom: 0.2em; }
 
-/* Textareas (layout only) */
 textarea {
   border-width: 1px;
   border-style: solid;
@@ -203,7 +202,6 @@ textarea {
   padding: .5em;
 }
 
-/* Cards and items spacing */
 .serpAccount, .status, .notificationItem {
   padding: .75em;
   margin-top: .85em;
@@ -212,5 +210,4 @@ textarea {
   margin-right: .1em;
 }
 
-/* Inline page label position */
 #ipa { position: relative; top: -.5em; left: .3em; }
