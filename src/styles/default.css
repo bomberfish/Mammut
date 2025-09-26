@@ -65,12 +65,9 @@ textarea,
 }
 
 textarea {
-    border: 1px solid #454547;
+    border-color: #454547;
     color: #000;
-    border-radius: .8em;
-    -moz-border-radius: .8em;
-    -webkit-border-radius: .8em;
-    padding: .5em
+    
 }
 
 body {
@@ -448,7 +445,7 @@ button {
 
 #userTable,
 #userTable td {
-    border: 1px solid #454547;
+    border-color: #454547;
 }
 
 #userTable tr.verified {
@@ -528,7 +525,7 @@ frame#rightmost {
 }
 
 iframe[src^="/emoji.html"] {
-    border: 1px solid #454547;
+    border-color: #454547;
     border-radius: 1em;
     resize: vertical;
     margin-bottom: 0.5em;
@@ -684,7 +681,7 @@ blockquote:after {
     #userTable,
     #userTable td {
         border-color: #454547;
-    }
+        }
 
     #userTable tr.verified {
         background-color: #55ff8822;

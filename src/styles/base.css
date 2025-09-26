@@ -1,0 +1,216 @@
+/* Base layout and sizing for Mammut UI.
+   This file must not contain colors, fills, or backgrounds. */
+
+/* Typography sizing (no colors) */
+.subdued { font-size: .8em; }
+.xtraDetails { font-size: .8em; margin-top: 1em; margin-bottom: 1em; margin-left: .1em; }
+.poll>span { font-size: .8em; }
+.spoiler { font-size: 0.8em; }
+.postlabel { font-size: .8em; margin-bottom: .25em; }
+.serpHandle { font-size: 0.8em; }
+.reaction .inner { font-size: 1.3em; height: 1.5em; }
+#ipa { font-size: .4em; }
+
+/* Global content widths */
+.status>*>p { width: fit-content; }
+.status div { width: fit-content; }
+.content { width: 100% !important; }
+.content>p { width: fit-content; }
+.content>p, .content>p>* { max-width: 100%; }
+
+/* Spacing and containers */
+#timeline { padding-top: 0.75em; }
+
+#newBtn, #olderBtn, .attachment, .serpAccount, .status {
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+}
+
+.notificationItem {
+  border-radius: .6em;
+  -moz-border-radius: .6em;
+  -webkit-border-radius: .6em;
+  padding: .75em;
+}
+
+.attachment {
+  display: block;
+  margin: .5em 0;
+  padding: .5em;
+  border-width: 1px;
+  border-style: solid;
+  min-width: 7em;
+  width: 20em;
+  max-width: 80%;
+  height: auto;
+  resize: both;
+  overflow: auto;
+}
+
+#viewOptions { margin-top: 1em; }
+#viewOptions>label { margin-right: 0.5em; }
+
+/* Buttons */
+#newBtn, #olderBtn {
+  appearance: button;
+  -moz-appearance: button;
+  -webkit-appearance: button;
+  padding: .25em .5em;
+  font-size: 1.2em;
+}
+
+#viewOptions > label { position: relative; top: -0.05em; margin-left: 0.05em; }
+
+#newBtn { position: fixed; bottom: 2em; right: 1em; }
+#olderBtn { text-align: center; }
+
+/* Top/bottom nav placement */
+#topNav, #bottomNav {
+  position: fixed;
+  left: 0; right: 0; width: 100%;
+  padding: 6px;
+  z-index: 100;
+}
+#topNav { top: 0; }
+#bottomNav { bottom: 0; }
+
+/* Post actions */
+.postAction, .reaction { margin-right: 0.3em; padding-bottom: 0.3em; font-size: 1em; }
+.postActions, .reactions { margin: 0.2em; margin-top: 0.6em; }
+.reaction>* , .postAction>* { vertical-align: middle; }
+
+/* Inline SVG sizing */
+button svg {
+  display: inline;
+  width: 1.5em;
+  height: 1.5em;
+  position: relative;
+  top: 0.3em;
+}
+
+button .btn-inner-text { position: relative; bottom: 0.15em; }
+
+/* Button default appearance (no color) */
+button {
+  appearance: button !important;
+  -webkit-appearance: button !important;
+  -moz-appearance: button !important;
+  -ms-appearance: button !important;
+}
+
+/* Frames and frameset */
+frameset { overflow-y: hidden; }
+
+frame { border-right-width: 2px; border-right-style: solid; }
+frame#rightmost { border-right: none; }
+
+/* Emoji and emote sizing/position */
+.emote {
+  min-width: 1.1em;
+  height: 1.1em;
+  display: inline-block;
+  position: relative;
+  top: 0.275em;
+}
+.emote:hover { min-width: 1.5em; height: 1.5em; top: 0.1em; }
+
+.picker-grid .emote { min-width: 2em; height: 2em; margin: 0.1em; top: 0.5em; }
+.picker-grid .emote:hover { min-width: 2em; height: 2em; top: 0.5em; }
+
+/* Polls */
+.poll { width: 100%; }
+.pollOption { height: 1.75em; margin: 0.2em; }
+.pollOptionInner {
+  height: 1.5em;
+  padding-left: 0.25em;
+  padding-bottom: 0;
+  padding-top: 0.5em;
+  border-radius: 0.25em;
+  position: relative;
+  top: 100%;
+  left: 0;
+}
+.pollOption * { z-index: 2; }
+.pollOptionInner { z-index: 0; }
+
+/* Tables */
+#userTable { border-collapse: collapse; }
+#userTable td { padding: 0.3em; }
+#userTable, #userTable td { border-width: 1px; border-style: solid; }
+
+/* Images */
+.reactionImage { height: 1.5rem; width: auto; }
+
+/* Lists */
+#notificationList { list-style: none; padding: 0; }
+
+/* Misc spacing */
+#bio { margin-top: 1em; margin-bottom: 1em; }
+
+/* Hidden elements */
+#sacrifice, .sacrifice {
+  width: 0; height: 0; overflow: hidden; margin: 0; padding: 0; border: 0;
+}
+
+/* Emoji picker iframe */
+iframe[src^="/emoji.html"] {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 1em;
+  resize: vertical;
+  margin-bottom: 0.5em;
+}
+
+/* Blockquotes (structure only) */
+blockquote {
+  margin: 0;
+  padding-left: 1.5em;
+  padding-top: .05em;
+  padding-bottom: .05em;
+  margin-right: 2em;
+  margin-top: 0.5em;
+  margin-bottom: .5em;
+  border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -moz-border-radius: 1em;
+  position: relative;
+}
+
+blockquote::after, blockquote:after {
+  content: "";
+  width: 1em;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 1em 0 0 1em;
+  -webkit-border-radius: 1em 0 0 1em;
+  -moz-border-radius: 1em 0 0 1em;
+}
+
+/* Search results */
+.serpName { margin-bottom: 0.2em; }
+
+/* Textareas (layout only) */
+textarea {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: .8em;
+  -moz-border-radius: .8em;
+  -webkit-border-radius: .8em;
+  padding: .5em;
+}
+
+/* Cards and items spacing */
+.serpAccount, .status, .notificationItem {
+  padding: .75em;
+  margin-top: .85em;
+  margin-bottom: .85em;
+  margin-left: .1em;
+  margin-right: .1em;
+}
+
+/* Inline page label position */
+#ipa { position: relative; top: -.5em; left: .3em; }
