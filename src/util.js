@@ -242,7 +242,7 @@ function interpolateEmoji(contentDiv, emojis) {
 
 function createFollowButton(follows, userId) {
   var followBtn = document.createElement("button");
-  followBtn.className = "followBtn";
+  followBtn.className = "followBtn bb-button-dark-10dot3";
   followBtn.innerHTML = follows ? "Unfollow" : "Follow";
   // followBtn.style.fontSize = "1.1em";
   // followBtn.style.fontWeight = "600";
