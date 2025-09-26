@@ -315,6 +315,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
     for (var i = 0; i < status.media_attachments.length; i++) {
       var attachment = status.media_attachments[i];
+      if (!attachment) continue;
       switch (attachment.type) {
         case "image":
           var img = document.createElement("img");
