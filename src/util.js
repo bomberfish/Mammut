@@ -11,6 +11,35 @@ if (typeof XMLHttpRequest == "undefined")
   };
 window.addEventListener = window.addEventListener || function (e, f) { window.attachEvent('on' + e, f); };
 
+function disclosure(summary, details) {
+  var detailsEl = document.createElement("details");
+  var summaryEl = document.createElement("summary");
+
+  summaryEl.innerHTML = summary.innerHTML;
+  detailsEl.appendChild(summaryEl);
+  detailsEl.innerHTML += details.innerHTML;
+
+  if (!("open" in detailsEl)) {
+    // polyfill for browsers that don't support <details> (IE)
+    console.log("using details polyfill");
+    var isOpen = false;
+    const detailsElContent = detailsEl.childNodes[1];
+    detailsElContent.style.display = "none";
+    summaryEl.style.cursor = "pointer";
+    summaryEl.onclick = function () {
+      if (isOpen) {
+        detailsElContent.style.display = "none";
+        isOpen = false;
+      } else { 
+        detailsElContent.style.display = "block";
+        isOpen = true;
+      }
+    };
+  }
+
+  return detailsEl; // return the whole
+}
+
 function truncate(t, e) {
   return t.length > e ? t.substr(0, e - 3) + "..." : t;
 }

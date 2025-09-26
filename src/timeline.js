@@ -94,8 +94,10 @@ function getTimeline(timelineType) {
 }
 
 function appendStatus(original_post, currentViewType, indentAmount, pinned) {
-  var status = original_post,
-    statusDiv = document.createElement("div");
+  var status = original_post;
+  var statusDiv = document.createElement("div");
+  var innerStatusDiv = document.createElement("div");
+  var contentDiv = document.createElement("div");
 
   if (indentAmount) {
     statusDiv.style.marginLeft = indentAmount + "px";
@@ -145,43 +147,12 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
   }
 
   statusDiv.onclick = function (e) {
-    if (statusDiv != e.target && contentDiv != e.target) return;
+    if (e.target != statusDiv && e.target != contentDiv) return;
     window.location.href = "/status.html?id=" + status.id;
   };
 
-  if (status.sensitive && currentViewType != "expanded") {
-    var userLink = document.createElement("a");
-    userLink.href = "/user.html?id=" + status.account.id;
-    userLink.innerHTML = status.account.display_name;
-    interpolateEmoji(userLink, status.account.emojis);
-    statusDiv.appendChild(userLink);
 
-    statusDiv.appendChild(document.createElement("br"));
-
-    var spoilerDiv = document.createElement("div");
-    spoilerDiv.className = "spoiler";
-
-    var spoilerLabel = document.createElement("strong");
-    spoilerLabel.className = "spoiler-label";
-    spoilerLabel.innerHTML = "Content Warning:";
-
-    spoilerDiv.appendChild(spoilerLabel);
-
-    var text = document.createTextNode(
-      " " + status.spoiler_text + " (Click this post to reveal full details)"
-    );
-
-    spoilerDiv.appendChild(text);
-
-    statusDiv.appendChild(spoilerDiv);
-  } else {
-    var userLink = document.createElement("a");
-    userLink.href = "/user.html?id=" + status.account.id;
-    userLink.innerHTML = status.account.display_name;
-    interpolateEmoji(userLink, status.account.emojis);
-    statusDiv.appendChild(userLink);
-    statusDiv.appendChild(document.createElement("br"));
-    var contentDiv = document.createElement("div");
+  function createPostContent() {
     contentDiv.className = "content";
     contentDiv.innerHTML = status.content;
 
@@ -200,7 +171,7 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
     interpolateEmoji(contentDiv, status.emojis);
 
-    statusDiv.appendChild(contentDiv);
+    innerStatusDiv.appendChild(contentDiv);
 
     if (status.poll) {
       function appendPoll(poll, status) {
@@ -373,15 +344,15 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
             "onclick",
             'window.open("' + attachment.url + '", "_blank")'
           );
-          statusDiv.appendChild(img);
+          innerStatusDiv.appendChild(img);
           break;
         case "video":
-          appendVideo(attachment.url, statusDiv, attachment.description);
+          appendVideo(attachment.url, innerStatusDiv, attachment.description);
           break;
         case "gifv":
           appendVideo(
             attachment.url,
-            statusDiv,
+            innerStatusDiv,
             true,
             undefined,
             true,
@@ -396,16 +367,48 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
             audio.alt = attachment.description;
           }
           audio.src = attachment.url;
-          statusDiv.appendChild(audio);
+          innerStatusDiv.appendChild(audio);
         default:
           var attachmentLink = document.createElement("a");
           attachmentLink.className = "attachment";
           attachmentLink.href = attachment.url;
           attachmentLink.target = "_blank";
           attachmentLink.innerHTML = attachment.url.split("/").pop();
-          statusDiv.appendChild(attachmentLink);
+          innerStatusDiv.appendChild(attachmentLink);
       }
     }
+
+    return innerStatusDiv;
+  }
+
+  var userLink = document.createElement("a");
+  userLink.href = "/user.html?id=" + status.account.id;
+  userLink.innerHTML = status.account.display_name;
+  interpolateEmoji(userLink, status.account.emojis);
+  statusDiv.appendChild(userLink);
+  statusDiv.appendChild(document.createElement("br"));
+
+  if (status.sensitive && currentViewType != "expanded") {
+    var spoilerDiv = document.createElement("div");
+    spoilerDiv.className = "spoiler";
+
+    var spoilerLabel = document.createElement("strong");
+    spoilerLabel.className = "spoiler-label";
+    spoilerLabel.innerHTML = "Content Warning:";
+
+    spoilerDiv.appendChild(spoilerLabel);
+
+    var text = document.createTextNode(
+      " " + status.spoiler_text + " (Click to reveal full post)"
+    );
+
+    spoilerDiv.appendChild(text);
+
+    statusDiv.appendChild(disclosure(spoilerDiv, createPostContent()));
+
+    // statusDiv.appendChild(spoilerDiv);
+  } else {
+    statusDiv.appendChild(createPostContent());
   }
 
   var postActions = document.createElement("div");
