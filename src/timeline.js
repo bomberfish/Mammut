@@ -315,7 +315,10 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
 
     for (var i = 0; i < status.media_attachments.length; i++) {
       var attachment = status.media_attachments[i];
-      if (!attachment) continue;
+      if (!attachment) { 
+        console.warn("Missing attachment", i, status.media_attachments);
+        continue;
+      }
       switch (attachment.type) {
         case "image":
           var img = document.createElement("img");
@@ -356,7 +359,10 @@ function appendStatus(original_post, currentViewType, indentAmount, pinned) {
           audio.src = attachment.url;
           innerStatusDiv.appendChild(audio);
         default:
-          if (attachment.url === null || attachment.url === undefined) break;
+          if (attachment.url === null || attachment.url === undefined) {
+            console.warn("Attachment URL is missing", attachment);
+            break;
+          }
           var attachmentLink = document.createElement("a");
           attachmentLink.className = "attachment";
           attachmentLink.href = attachment.url;
