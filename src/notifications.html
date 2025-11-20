@@ -62,12 +62,6 @@
                 } else {
                   notificationTitle.textContent = "Moderation warning";
                 }
-                var info = document.createElement("a");
-                info.href = domain + "/disputes/strikes/" + notification.moderation_warning.id;
-                info.innerHTML = "View details";
-                info.setAttribute("target", "_blank");
-                notificationTitle.appendChild(document.createTextNode(" "));
-                notificationTitle.appendChild(info);
             } else {
               var acct = document.createElement("a");
               acct.href = "/user.html?id=" + notification.account.id;
@@ -138,23 +132,37 @@
               }
               notificationItem.appendChild(notificationText);
               interpolateEmoji(notificationText, notification.status.emojis);
-              var notificationButton = document.createElement("button");
-              notificationButton.classList = "notificationButton";
-              notificationButton.innerHTML = "View Post";
-              const url = "/status.html?id=" + notification.status.id;
-              console.log(url);
-              notificationButton.onclick = function () {
-                window.open(url, "content");
-              };
-              notificationItem.appendChild(notificationButton);
             } else {
               notificationItem.appendChild(notificationText);
             }
 
-            notificationItem.innerHTML +=
-              "<div class='notificationTime subdued' style='margin-top: 10px;'> at " +
-              new Date(notification.created_at).toLocaleString() +
-              "</div>";
+
+            var notificationButton = document.createElement("button");
+            notificationButton.classList = "notificationButton";
+            if (notification.moderation_warning) {
+                notificationButton.innerHTML = "View Details";
+                const url = domain + "/disputes/strikes/" + notification.moderation_warning.id;
+                console.log(url);
+                notificationButton.onclick = function () {
+                  window.open(url, "_blank");
+                };
+                notificationItem.appendChild(notificationButton);
+              } else if (notification.status) {
+                notificationButton.innerHTML = "View Post";
+                const url = "/status.html?id=" + notification.status.id;
+                console.log(url);
+                notificationButton.onclick = function () {
+                  window.open(url, "content");
+                };
+                notificationItem.appendChild(notificationButton);
+              }
+
+            var timeDiv = document.createElement("div");
+            timeDiv.className = "notificationTime subdued";
+            timeDiv.style.marginTop = "10px";
+            timeDiv.textContent =
+              " at " + new Date(notification.created_at).toLocaleString();
+            notificationItem.appendChild(timeDiv);
           }
         });
       }
