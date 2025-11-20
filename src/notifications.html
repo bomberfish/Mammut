@@ -53,16 +53,37 @@
             notificationList.appendChild(notificationItem);
             var notificationText = document.createElement("p");
             notificationText.classList = "notificationText";
+
+            if (notification.type == "moderation_warning" && notification.moderation_warning) {
+                if (notification.moderation_warning.action = "delete_statuses") {
+                  notificationText.innerHTML = "One or more of your posts have been deleted. ";
+                } else {
+                  notificationText.innerHTML =
+                    "Moderation warning. ";
+                }
+                var info = document.createElement("a");
+                info.href = domain + "/disputes/strikes/" + notification.moderation_warning.id;
+                info.innerHTML = "View details";
+                info.setAttribute("target", "_blank");
+                notificationText.appendChild(info);
+            } else {
             notificationText.innerHTML =
               notification.type.charAt(0).toUpperCase() +
               notification.type.substr(1) +
               " from ";
-
-            var acct = document.createElement("a");
+              var acct = document.createElement("a");
             acct.href = "/user.html?id=" + notification.account.id;
             acct.innerHTML = "@" + notification.account.acct;
             acct.setAttribute("target", "content");
             notificationText.appendChild(acct);
+            }
+
+            if (notification.moderation_warning && notification.moderation_warning.text) {
+              notificationText.innerHTML +=
+                "<div class='notification-content'>Reason: " +
+                notification.moderation_warning.text +
+                "</div>";
+            }
 
             if (notification.status) {
               if (notification.status.content) {
